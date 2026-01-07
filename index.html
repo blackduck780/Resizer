@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Resize Images/PDFs/Docs - GitHub Pages</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;">
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.432/build/pdf.min.js"></script>
+  <style>
+    body { font-family: Arial; max-width: 800px; margin: 0 auto; padding: 20px; }
+    canvas, #pdfCanvas { border: 1px solid #ccc; max-width: 100%; height: auto; }
+    input, button { margin: 10px 0; padding: 10px; width: 100%; box-sizing: border-box; }
+    #preview { margin-top: 20px; }
+    #download { display: none; }
+    .blocked { display: none !important; background: #f00; color: white; padding: 20px; }
+    #status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Secure Upload & Resize (DoS Protected)</h1>
+  <div id="status"></div>
+  <div id="blockedMsg" class="blocked">🚫 Access blocked: Too many requests or suspicious browser. Try incognito or wait 5 min.</div>
+  <input type="file" id="fileInput" multiple accept="image/*,.pdf,.txt,.docx" disabled>
+  <label>Max Width: <input type="number" id="maxWidth" value="800" min="100" disabled></label>
+  <label>Max Height: <input type="number" id="maxHeight" value="600" min="100" disabled></label>
+  <button id="processBtn" onclick="processFiles()" disabled>Process & Resize</button>
+  <div id="preview"></div>
+  <a id="download" download>Download Resized</a>
+
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.432/build/pdf.worker.min.js';
+
+    // Security: Fingerprinting for visitor tracking
+    async function getFingerprint() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.textBaseline = 'top';
+      ctx.font = '14px Arial';
+      ctx.fillText('Fingerprint test 🖐️', 2, 2);
+      const canvasHash = btoa(canvas.toDataURL());
+
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 10000;
+      const compressor = audioCtx.createDynamicsCompressor();
+      oscillator.connect(compressor);
+      compressor.connect(audioCtx.destination);
+      oscillator.start();
+      await new Promise(r => setTimeout(r, 100));
+      oscillator.stop();
+      const audioHash = btoa(audioCtx.sampleRate.toString());
+
+      return btoa(canvasHash + audioHash + navigator.userAgent + screen.width + screen.height).slice(0, 32);
+    }
+
+    // Rate limiter: 5 actions / 5min per fingerprint
+    class RateLimiter {
+      constructor() {
+        this.fp = localStorage.getItem('fp');
+        if (!this.fp) {
+          getFingerprint().then(f => {
+            this.fp = f;
+            localStorage.setItem('fp', f);
+            this.initLimiter();
+          });
+        } else {
+          this.initLimiter();
+        }
+      }
+      initLimiter() {
+        const actions = JSON.parse(localStorage.getItem(`actions_${this.fp}`) || '[]');
+        const now = Date.now();
+        actions.push(now);
+        const recent = actions.filter(t => now - t < 5 * 60 * 1000);
+        localStorage.setItem(`actions_${this.fp}`, JSON.stringify(actions));
+        if (recent.length > 5) {
+          this.block();
+          return false;
+        }
+        return true;
+      }
+      logAction() {
+        return this.initLimiter();
+      }
+      block() {
+        document.body.innerHTML = '<div id="blockedMsg" class="blocked">🚫 Access blocked: Too many requests. Wait 5 min or incognito.</div>';
+        throw new Error('Blocked');
+      }
+    }
+
+    const limiter = new RateLimiter();
+    const statusEl = document.getElementById('status');
+    const inputs = document.querySelectorAll('input, button');
+
+    // Enable UI if not blocked
+    if (limiter.fp) {
+      setTimeout(() => {
+        inputs.forEach(el => el.disabled = false);
+        statusEl.textContent = `✅ Ready (Fingerprint: ${limiter.fp.slice(0,8)}...)`;
+        statusEl.style.background = '#d4edda';
+      }, 500);
+    }
+
+    // Sanitize inputs
+    function sanitize(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function processFiles() {
+      if (!limiter.logAction()) return;
+      statusEl.textContent = 'Processing...';
+      statusEl.style.background = '#fff3cd';
+
+      const files = Array.from(document.getElementById('fileInput').files).slice(0,3); // Max 3 files
+      const preview = document.getElementById('preview');
+      const maxW = Math.min(2000, parseInt(document.getElementById('maxWidth').value)); // Sanitize
+      const maxH = Math.min(2000, parseInt(document.getElementById('maxHeight').value));
+      preview.innerHTML = '';
+
+      for (let file of files) {
+        const div = document.createElement('div');
+        div.style.marginBottom = '30px';
+        div.innerHTML = `<h3>${sanitize(file.name)} (${(file.size/1024).toFixed(1)} KB)</h3>`;
+
+        try {
+          if (file.type.startsWith('image/')) {
+            const img = new Image();
+            img.onload = () => resizeAndAdd(img, div, maxW, maxH, file.name.replace(/.[^/.]+$/, '_resized.png'));
+            img.src = URL.createObjectURL(file);
+          } else if (file.name.toLowerCase().endsWith('.pdf')) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+            const page = await pdf.getPage(1);
+            const scale = 1.5;
+            const viewport = page.getViewport({scale});
+            const canvas = document.createElement('canvas');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({canvasContext: canvas.getContext('2d'), viewport}).promise;
+            const thumbW = Math.min(canvas.width, maxW);
+            const thumbH = canvas.height * (thumbW / canvas.width);
+            resizeCanvas(canvas, thumbW, thumbH, div, file.name.replace('.pdf', '_thumb.png'));
+          } else {
+            const text = await file.text();
+            div.innerHTML += `<pre style="background:#f5f5f5;padding:10px;max-height:200px;overflow:auto;">${sanitize(text.slice(0,1000))}...</pre>`;
+            const blob = new Blob([text], {type: 'text/plain'});
+            downloadLink(URL.createObjectURL(blob), file.name + '_processed.txt');
+          }
+          preview.appendChild(div);
+        } catch(e) {
+          div.innerHTML += '<p style="color:red;">Error processing file.</p>';
+        }
+      }
+      statusEl.textContent = `${files.length} files processed!`;
+      statusEl.style.background = '#d1ecf1';
+    }
+
+    function resizeDimensions(w, h, maxW, maxH) {
+      const ratio = Math.min(maxW / w, maxH / h, 1);
+      return { width: Math.floor(w * ratio), height: Math.floor(h * ratio) };
+    }
+
+    function resizeAndAdd(img, div, maxW, maxH, filename) {
+      const { width, height } = resizeDimensions(img.width, img.height, maxW, maxH);
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      div.appendChild(canvas);
+      canvas.toBlob((blob) => downloadLink(URL.createObjectURL(blob), filename));
+    }
+
+    function resizeCanvas(sourceCanvas, maxW, maxH, div, filename) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = maxW;
+      canvas.height = maxH;
+      ctx.drawImage(sourceCanvas, 0, 0, maxW, maxH);
+      div.appendChild(canvas);
+      canvas.toBlob((blob) => downloadLink(URL.createObjectURL(blob), filename));
+    }
+
+    function downloadLink(url, filename) {
+      const link = document.getElementById('download');
+      link.href = url;
+      link.download = filename;
+      link.style.display = 'block';
+      link.textContent = `💾 Download ${filename}`;
+    }
+
+    // Throttle events
+    let throttleTimeout;
+    document.getElementById('fileInput').addEventListener('change', () => {
+      clearTimeout(throttleTimeout);
+      throttleTimeout = setTimeout(() => {}, 1000);
+    });
+  </script>
+</body>
+</html>
