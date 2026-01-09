@@ -1,438 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔒 RedeYe - Secure Image & PDF Resizer</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.7.432/pdf.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            color: #e0e0e0;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .logo {
-            font-size: 3em;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            color: #a0a0a0;
-            font-size: 1.2em;
-        }
-
-        .upload-area {
-            border: 3px dashed #4ecdc4;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.3s ease;
-            margin-bottom: 30px;
-            background: rgba(78, 205, 196, 0.1);
-        }
-
-        .upload-area:hover {
-            border-color: #45b7d1;
-            background: rgba(69, 183, 209, 0.15);
-            transform: translateY(-5px);
-        }
-
-        .upload-area.dragover {
-            border-color: #f9ca24;
-            background: rgba(249, 202, 36, 0.2);
-            transform: scale(1.02);
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        .file-label {
-            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            display: inline-block;
-            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
-        }
-
-        .file-label:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(78, 205, 196, 0.4);
-        }
-
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .control-group label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #4ecdc4;
-        }
-
-        input[type="number"] {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-            color: white;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-        }
-
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
-        }
-
-        .process-btn {
-            background: linear-gradient(45deg, #ff6b6b, #f9ca24);
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-size: 1.2em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
-        }
-
-        .process-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
-        }
-
-        .process-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        #status {
-            padding: 15px 25px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 600;
-            margin-bottom: 30px;
-            min-height: 20px;
-        }
-
-        .status-ready { background: rgba(78, 205, 196, 0.2); color: #4ecdc4; }
-        .status-processing { background: rgba(249, 202, 36, 0.2); color: #f9ca24; }
-        .status-success { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
-        .status-error { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
-
-        .results {
-            display: grid;
-            gap: 30px;
-        }
-
-        .result-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .result-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .filename {
-            font-weight: 700;
-            color: #4ecdc4;
-            font-size: 1.3em;
-        }
-
-        .filesize {
-            background: rgba(78, 205, 196, 0.2);
-            color: #4ecdc4;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-        }
-
-        .preview-canvas {
-            max-width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
-
-        .download-btn {
-            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.4);
-        }
-
-        @media (max-width: 768px) {
-            .controls {
-                grid-template-columns: 1fr;
-            }
-            
-            .container {
-                padding: 20px;
-                margin: 10px;
-            }
-        }
-    </style>
+<title>🔒 RED-EYE - Universal Image Resizer</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:900px;margin:50px auto;background:#1a1a2e;color:white;padding:20px;}
+input,button{width:100%;padding:15px;margin:10px 0;border-radius:12px;border:none;font-size:16px;}
+button{background:linear-gradient(45deg,#ff1744,#ff5722);color:white;cursor:pointer;font-weight:600;box-shadow:0 5px 15px rgba(255,23,68,0.3);}
+canvas{max-width:100%;border:2px solid #ff1744;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+#status{padding:15px 20px;background:rgba(255,23,68,0.2);border-radius:12px;font-weight:500;}
+.container{padding:30px;background:rgba(255,255,255,0.05);border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,23,68,0.3);}
+.logo{font-size:2.8em;background:linear-gradient(45deg,#ff1744,#ff5722,#ffc107);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;text-align:center;margin-bottom:10px;}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">🔒 RedeYe</div>
-            <div class="subtitle">Secure Image & PDF Resizer • Apache Licensed</div>
-        </div>
+<div class="container">
+<div class="logo">🔴 RED-EYE</div>
+<p style="text-align:center;color:#a0a0a0;margin-bottom:30px;font-size:1.1em;">Universal Image Resizer • Firefox Nightly Optimized • Apache Licensed</p>
 
-        <div class="upload-area" id="uploadArea">
-            <div style="font-size: 4em; margin-bottom: 20px;">📁</div>
-            <div style="font-size: 1.3em; margin-bottom: 20px; color: #a0a0a0;">Drag & drop or click to upload</div>
-            <label for="fileInput" class="file-label">Choose Files</label>
-            <input type="file" id="fileInput" multiple accept="image/*,.pdf,.txt">
-        </div>
+<div id="status">👁️ Select image → Resize → Download</div>
+<input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/jpg">
+<input type="number" id="width" value="800" min="100" max="2000" placeholder="Max Width">
+<input type="number" id="height" value="600" min="100" max="2000" placeholder="Max Height">
+<button onclick="resizeImage()">🚀 RESIZE WITH RED-EYE</button>
 
-        <div class="controls">
-            <div class="control-group">
-                <label>Max Width</label>
-                <input type="number" id="maxWidth" value="800" min="100" max="2000">
+<div id="preview" style="margin-top:30px;"></div>
+</div>
+
+<script>
+// 🔥 RED-EYE Universal Canvas Resizer - All Browsers
+function resizeImage() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    const preview = document.getElementById('preview');
+    const status = document.getElementById('status');
+    
+    if (!file) {
+        status.textContent = '⚠️ Please select an image first';
+        return;
+    }
+    
+    if (!file.type.startsWith('image/')) {
+        status.textContent = '⚠️ Please select JPG, PNG, or WebP (under 15MB)';
+        return;
+    }
+    
+    status.textContent = '🔴 RED-EYE processing...';
+    preview.innerHTML = '';
+    
+    const img = new Image();
+    img.onload = function() {
+        const maxW = Math.min(parseInt(document.getElementById('width').value), 2000);
+        const maxH = Math.min(parseInt(document.getElementById('height').value), 2000);
+        
+        // Proportional resize
+        const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = img.naturalWidth * ratio;
+        canvas.height = img.naturalHeight * ratio;
+        
+        // High quality settings
+        ctx.imageSmoothingQuality = 'high';
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        // Preview + Download
+        preview.innerHTML = `
+            <div style="text-align:center;">
+                <h3 style="color:#ff1744;">✅ RESIZED SUCCESSFULLY</h3>
+                <canvas id="resizedCanvas" style="max-width:100%;border:3px solid #ff1744;border-radius:15px;box-shadow:0 15px 40px rgba(255,23,68,0.3);"></canvas>
+                <br><br>
+                <a id="downloadLink" style="display:inline-block;background:linear-gradient(45deg,#ff1744,#ff5722);color:white;padding:18px 40px;border-radius:30px;text-decoration:none;font-weight:700;font-size:20px;margin:20px 0;box-shadow:0 15px 40px rgba(255,23,68,0.4);" href="#" download="red-eye-resized.jpg">💾 DOWNLOAD RED-EYE IMAGE</a>
+                <p style="color:#a0a0a0;font-size:1.1em;">
+                    📏 Original: ${img.naturalWidth}x${img.naturalHeight} 
+                    → New: ${canvas.width.toFixed(0)}x${canvas.height.toFixed(0)} 
+                    | 📦 ${Math.round(canvas.toDataURL().length*0.0009/1024)}KB
+                </p>
             </div>
-            <div class="control-group">
-                <label>Max Height</label>
-                <input type="number" id="maxHeight" value="600" min="100" max="2000">
-            </div>
-            <button class="process-btn" onclick="processFiles()" id="processBtn">🚀 Process Files</button>
-        </div>
+        `;
+        
+        const outputCanvas = document.getElementById('resizedCanvas');
+        outputCanvas.width = canvas.width;
+        outputCanvas.height = canvas.height;
+        outputCanvas.getContext('2d').drawImage(canvas, 0, 0);
+        
+        const downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = canvas.toDataURL('image/jpeg', 0.92);
+        downloadLink.download = `RED-EYE_${Date.now()}_${file.name.replace(/.[^/.]+$/, '.jpg')}`;
+        
+        status.innerHTML = `✅ <strong>RED-EYE COMPLETE!</strong> ${canvas.width.toFixed(0)}x${canvas.height.toFixed(0)} ready for download`;
+        status.style.background = 'rgba(255,23,68,0.3)';
+    };
+    
+    img.onerror = function() {
+        status.innerHTML = '❌ Image failed to load<br><small>Try JPG/PNG under 15MB or different image</small>';
+        status.style.background = 'rgba(255,87,34,0.3)';
+    };
+    
+    // Universal FileReader (Firefox Nightly safe)
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        img.src = e.target.result;
+    };
+    reader.onerror = () => {
+        status.textContent = '❌ File read error - Try different image';
+    };
+    reader.readAsDataURL(file);
+}
 
-        <div id="status" class="status-ready">Ready to resize your files</div>
-        <div id="results" class="results"></div>
-    </div>
-
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.7.432/pdf.worker.min.js';
-
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const processBtn = document.getElementById('processBtn');
-
-        // Drag & drop
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, highlight, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, unhighlight, false);
-        });
-
-        function highlight(e) {
-            uploadArea.classList.add('dragover');
-        }
-
-        function unhighlight(e) {
-            uploadArea.classList.remove('dragover');
-        }
-
-        uploadArea.addEventListener('drop', handleDrop, false);
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            fileInput.files = files;
-            handleFiles(files);
-        }
-
-        async function processFiles() {
-            const files = fileInput.files;
-            if (files.length === 0) {
-                showStatus('Please select files first', 'error');
-                return;
-            }
-
-            processBtn.disabled = true;
-            processBtn.textContent = 'Processing...';
-            showStatus('Processing files...', 'processing');
-
-            const results = document.getElementById('results');
-            results.innerHTML = '';
-
-            const maxW = parseInt(document.getElementById('maxWidth').value);
-            const maxH = parseInt(document.getElementById('maxHeight').value);
-
-            for (let file of files) {
-                const resultDiv = createResultDiv(file, maxW, maxH);
-                results.appendChild(resultDiv);
-            }
-
-            showStatus(`${files.length} files processed successfully!`, 'success');
-            processBtn.disabled = false;
-            processBtn.textContent = '🚀 Process Files';
-        }
-
-        function createResultDiv(file, maxW, maxH) {
-            const div = document.createElement('div');
-            div.className = 'result-item';
-
-            const sizeKB = Math.round(file.size / 1024);
-            div.innerHTML = `
-                <div class="result-header">
-                    <div class="filename">${file.name}</div>
-                    <div class="filesize">${sizeKB}KB</div>
-                </div>
-            `;
-
-            if (file.type.startsWith('image/')) {
-                processImage(file, div, maxW, maxH);
-            } else if (file.name.toLowerCase().endsWith('.pdf')) {
-                processPDF(file, div, maxW, maxH);
-            } else {
-                processText(file, div);
-            }
-
-            return div;
-        }
-
-        function processImage(file, div, maxW, maxH) {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const ratio = Math.min(maxW / img.width, maxH / img.height);
-                canvas.width = img.width * ratio;
-                canvas.height = img.height * ratio;
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                
-                canvas.className = 'preview-canvas';
-                div.appendChild(canvas);
-
-                const downloadBtn = document.createElement('a');
-                downloadBtn.href = canvas.toDataURL('image/jpeg', 0.9);
-                downloadBtn.download = file.name.replace(/.[^/.]+$/, '_resized.jpg');
-                downloadBtn.className = 'download-btn';
-                downloadBtn.textContent = '💾 Download Resized Image';
-                div.appendChild(downloadBtn);
-            };
-            img.src = URL.createObjectURL(file);
-        }
-
-        async function processPDF(file, div, maxW, maxH) {
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-                const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 1.0 });
-                const scale = Math.min(maxW / viewport.width, maxH / viewport.height);
-                
-                const canvas = document.createElement('canvas');
-                canvas.height = viewport.height * scale;
-                canvas.width = viewport.width * scale;
-                canvas.className = 'preview-canvas';
-                
-                await page.render({
-                    canvasContext: canvas.getContext('2d'),
-                    viewport: page.getViewport({ scale })
-                }).promise;
-
-                div.appendChild(canvas);
-
-                const downloadBtn = document.createElement('a');
-                downloadBtn.href = canvas.toDataURL('image/jpeg');
-                downloadBtn.download = file.name.replace('.pdf', '_thumb.jpg');
-                downloadBtn.className = 'download-btn';
-                downloadBtn.textContent = '💾 Download PDF Thumbnail';
-                div.appendChild(downloadBtn);
-            } catch (error) {
-                div.innerHTML += `<p style="color:#e74c3c;">PDF processing failed</p>`;
-            }
-        }
-
-        function processText(file, div) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const preview = e.target.result.substring(0, 500) + (e.target.result.length > 500 ? '...' : '');
-                div.innerHTML += `<pre style="background:rgba(255,255,255,0.05);padding:20px;border-radius:10px;max-height:200px;overflow:auto;">${preview}</pre>`;
-            };
-            reader.readAsText(file);
-        }
-
-        function showStatus(message, type) {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = `status-${type}`;
-        }
-    </script>
+// Drag & drop support
+document.ondragover = () => false;
+document.ondrop = (e) => {
+    e.preventDefault();
+    document.getElementById('fileInput').files = e.dataTransfer.files;
+    resizeImage();
+};
+</script>
 </body>
-  </html>
+    </html>
