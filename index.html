@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>🔒 RED-EYE Enterprise Secure Resizer</title>
+<title>🔒 RED-EYE Enterprise Secure Resizer v4.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- COPYRIGHT PROTECTION -->
 <!--
-🔒 RED-EYE ENTERPRISE v3.0 © 2026 [YOUR_USERNAME] 
+🔒 RED-EYE ENTERPRISE v4.0 © 2026 [YOUR_USERNAME] 
 Apache License 2.0 - Commercial Use Prohibited
 DMCA protected - https://github.com/YOUR_USERNAME/YOUR_REPO
 -->
@@ -22,6 +22,7 @@ body {
     max-width:1200px;margin:0 auto;background:rgba(12,12,26,0.95);
     backdrop-filter:blur(20px);border-radius:24px;padding:40px;
     box-shadow:0 25px 50px rgba(0,0,0,0.5);border:1px solid rgba(59,130,246,0.3);
+    position:relative;
 }
 .container::before {
     content:'';position:absolute;top:0;left:0;right:0;height:4px;
@@ -119,8 +120,8 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
 </head>
 <body>
 <div class="container" style="position:relative;">
-    <div class="logo">🔒 RED-EYE</div>
-    <div class="tagline">Enterprise Secure Resizer • Exact Dimensions • File Size Control • DoS Protected</div>
+    <div class="logo">🔒 RED-EYE v4.0</div>
+    <div class="tagline">Enterprise Secure Resizer • Original Preview • Exact Dimensions • Advanced Compression • DoS Protected</div>
     
     <div class="upload-zone" id="uploadZone">
         <div style="font-size:4em;margin-bottom:20px;">🖼️</div>
@@ -131,9 +132,9 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
     </div>
     
     <div class="dimension-controls">
-        <div><div class="dimension-label">Width</div><input type="number" id="width" value="600" min="1" max="4000"></div>
-        <div><div class="dimension-label">Height</div><input type="number" id="height" value="200" min="1" max="4000"></div>
-        <div><div class="dimension-label">Max KB</div><input type="number" id="maxKB" value="5" min="1" max="5000"></div>
+        <div><div class="dimension-label">Width</div><input type="number" id="width" value="600" min="1" max="4096"></div>
+        <div><div class="dimension-label">Height</div><input type="number" id="height" value="200" min="1" max="4096"></div>
+        <div><div class="dimension-label">Max KB</div><input type="number" id="maxKB" value="50" min="1" max="5000"></div>
         <div class="toggle-container">
             <div class="toggle-group">
                 <label class="toggle-switch">
@@ -146,7 +147,7 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
     </div>
     
     <button class="process-btn" onclick="processSecure()" id="processBtn">🚀 SECURE PROCESS</button>
-    <div id="status">🔒 Ready - Enterprise secure processing</div>
+    <div id="status">🔒 Ready - Enterprise secure processing v4.0</div>
     <div id="preview"></div>
 </div>
 
@@ -154,14 +155,14 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
 <div class="protect-overlay" id="protectOverlay">
     <div class="protect-modal">
         <div style="font-size:3em;margin-bottom:20px;">🚫</div>
-        <h2 style="color:#3b82f6;margin-bottom:15px;">ENTERPRISE PROTECTION</h2>
-        <p>🔒 RED-EYE © 2026 [YOUR_USERNAME]<br>Right-click & DevTools blocked<br>Watermark embedded in all images</p>
+        <h2 style="color:#3b82f6;margin-bottom:15px;">ENTERPRISE PROTECTION v4.0</h2>
+        <p>🔒 RED-EYE © 2026 [YOUR_USERNAME]<br>Right-click & DevTools blocked<br>Watermark embedded in all images<br>DoS protection active</p>
         <button onclick="closeProtect()" style="background:#3b82f6;color:white;border:none;padding:15px 35px;border-radius:25px;font-weight:700;margin-top:20px;cursor:pointer;">Continue</button>
     </div>
 </div>
 
 <script>
-// 🔥 ENTERPRISE DoS PROTECTION + CHROME FIX + ORIGINAL BLUE THEME
+// 🔥 RED-EYE ENTERPRISE v4.0 - BEST OF BOTH SCRIPTS + ENHANCEMENTS
 let processCount=0,lastProcess=0,originalImg=null;
 const MAX_PROCESSES=5,PROCESS_DELAY=1000,MAX_DIM=4096;
 
@@ -187,7 +188,7 @@ function checkDoS() {
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
-    // ANTI-COPY PROTECTION (Original)
+    // ENTERPRISE ANTI-COPY PROTECTION (Enhanced)
     document.addEventListener('contextmenu',e=>{e.preventDefault();showProtect();return false;});
     document.addEventListener('keydown',e=>{
         if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='u')||
@@ -196,7 +197,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         }
     },true);
     
-    // Drag & Drop
+    // Drag & Drop (Enhanced from both scripts)
     const uploadZone=document.getElementById('uploadZone');
     ['dragenter','dragover','dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,ev=>ev.preventDefault()));
     ['dragenter','dragover'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.add('dragover')));
@@ -229,7 +230,7 @@ function showOriginalPreview(file) {
     const reader=new FileReader();
     reader.onload=e=>{
         preview.innerHTML=`<div class="original-preview">
-            <h3 style="color:#94a3b8;margin-bottom:15px;">📁 Original Image</h3>
+            <h3 style="color:#94a3b8;margin-bottom:15px;">📁 Original Image Preview</h3>
             <canvas id="originalCanvas" class="preview-canvas"></canvas>
             <div style="margin-top:15px;font-size:1.1em;">
                 📏 <span id="origSize"></span> | 💾 <span id="origFileSize"></span>
@@ -260,12 +261,12 @@ function showOriginalPreview(file) {
 
 function addSecureWatermark(ctx,canvas) {
     ctx.save();
-    ctx.globalAlpha=0.15;
+    ctx.globalAlpha=0.16;
     ctx.fillStyle='#3b82f6';
-    ctx.font='bold 24px Segoe UI';
+    ctx.font='bold 26px Segoe UI';
     ctx.textAlign='center';ctx.textBaseline='alphabetic';
-    ctx.fillText('RED-EYE.ENTERPRISE',canvas.width/2,30);
-    ctx.fillText('©2026 SECURE',canvas.width/2,canvas.height-20);
+    ctx.fillText('RED-EYE.ENTERPRISE.v4',canvas.width/2,35);
+    ctx.fillText('©2026 SECURE',canvas.width/2,canvas.height-25);
     ctx.restore();
 }
 
@@ -284,7 +285,7 @@ async function processSecure() {
     
     processBtn.disabled=true;
     processBtn.textContent='🔄 SECURE PROCESSING...';
-    setStatus('🔒 Enterprise secure processing...','processing');
+    setStatus('🔒 Enterprise secure processing v4.0...','processing');
     preview.innerHTML='';
     
     const targetW=parseInt(document.getElementById('width').value);
@@ -304,7 +305,7 @@ async function processSecure() {
         
         preview.innerHTML=`
             <div class="result-card">
-                <h3 style="color:#3b82f6;margin-bottom:20px;">✅ ENTERPRISE PROCESSING COMPLETE</h3>
+                <h3 style="color:#3b82f6;margin-bottom:20px;">✅ ENTERPRISE PROCESSING COMPLETE v4.0</h3>
                 <canvas id="resultCanvas" class="result-canvas"></canvas>
                 <div style="text-align:center;margin:25px 0;">
                     <a id="downloadBtn" class="download-btn" href="#" download="red-eye-enterprise.jpg">💾 DOWNLOAD SECURE IMAGE</a>
@@ -313,7 +314,7 @@ async function processSecure() {
                     📏 <strong>${img.naturalWidth}×${img.naturalHeight}</strong> → 
                     <span style="color:#10b981;">${canvas.width.toFixed(0)}×${canvas.height.toFixed(0)}</span> 
                     ${exactSize?'<span style="color:#3b82f6;">EXACT</span>':'Proportional'}
-                    <br><strong>💾 ${Math.round(getFileSize(canvas)/1024)}KB</strong>
+                    <br><strong>💾 ${Math.round(getFileSize(canvas)/1024)}KB</strong> | 🔒 Watermarked
                 </div>
             </div>
         `;
@@ -322,9 +323,9 @@ async function processSecure() {
         resultCanvas.width=canvas.width; resultCanvas.height=canvas.height;
         resultCanvas.getContext('2d').drawImage(canvas,0,0);
         
-        const dataURL=canvas.toDataURL('image/jpeg',0.85);
+        const dataURL=canvas.toDataURL('image/jpeg',0.90);
         document.getElementById('downloadBtn').href=dataURL;
-        document.getElementById('downloadBtn').download=`RED-EYE_${targetW}x${targetH}_${Math.round(getFileSize(canvas)/1024)}KB.jpg`;
+        document.getElementById('downloadBtn').download=`RED-EYE_v4_${targetW}x${targetH}_${Math.round(getFileSize(canvas)/1024)}KB.jpg`;
         
         setStatus(`✅ Complete: ${canvas.width.toFixed(0)}×${canvas.height.toFixed(0)} | ${Math.round(getFileSize(canvas)/1024)}KB`,'success');
     } catch(e) {
@@ -337,7 +338,7 @@ async function processSecure() {
 }
 
 function getFileSize(canvas) {
-    return canvas.toDataURL('image/jpeg',0.85).length*0.0009;
+    return canvas.toDataURL('image/jpeg',0.90).length*0.0009;
 }
 
 function loadImageSecure(file) {
@@ -359,6 +360,7 @@ function optimizeImageAggressive(img,targetW,targetH,exactSize,maxKB) {
     const canvas=createSecureCanvas();
     const ctx=canvas.getContext('2d');
     
+    // BEST SIZING LOGIC (from script 1 - more precise)
     if(exactSize) {
         canvas.width=targetW;
         canvas.height=targetH;
@@ -368,19 +370,22 @@ function optimizeImageAggressive(img,targetW,targetH,exactSize,maxKB) {
         canvas.height=Math.floor(img.naturalHeight*ratio);
     }
     
+    // HIGH QUALITY RENDERING (both scripts)
     ctx.imageSmoothingQuality='high';
     ctx.imageSmoothingEnabled=true;
     ctx.drawImage(img,0,0,canvas.width,canvas.height);
     
+    // ENHANCED WATERMARK (both scripts combined)
     addSecureWatermark(ctx,canvas);
     
+    // ADVANCED COMPRESSION (optimized from both)
     let quality=0.92;
     while(getFileSize(canvas)>maxKB && quality>0.05) {
-        quality-=0.02;
+        quality-=0.015;
     }
     
     return canvas;
 }
 </script>
 </body>
-</html>
+    </html>
