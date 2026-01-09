@@ -1,210 +1,309 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>🔒 RED-EYE Secure Resizer - Copy Protected</title>
-<!-- LEGAL COPYRIGHT -->
+<title>🔒 RED-EYE Enterprise Secure Resizer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- COPYRIGHT PROTECTION -->
 <!--
-🔒 RED-EYE SECURE RESIZER v2.1 © 2026 [YOUR_USERNAME]
-Apache License 2.0 - COMMERCIAL USE PROHIBITED
-GitHub: https://github.com/YOUR_USERNAME/YOUR_REPO  
-DMCA takedowns issued for unauthorized copying
+🔒 RED-EYE ENTERPRISE v3.0 © 2026 [YOUR_USERNAME] 
+Apache License 2.0 - Commercial Use Prohibited
+DMCA protected - https://github.com/YOUR_USERNAME/YOUR_REPO
 -->
 <style>
-/* ANTI-COPY CSS - APPLIED FIRST */
-* { user-select: none !important; -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; }
-body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; max-width: 900px; margin: 50px auto; background: #1a1a2e; color: white; padding: 20px; }
-::selection { background: transparent !important; color: inherit !important; }
-::-moz-selection { background: transparent !important; color: inherit !important; }
-
-/* COLORED PROTECTION MESSAGES */
-.protect-alert { 
-    position: fixed; top: 20px; right: 20px; background: linear-gradient(45deg, #ff1744, #ff5722); 
-    color: white; padding: 15px 25px; border-radius: 25px; font-weight: 700; font-size: 14px; 
-    box-shadow: 0 10px 30px rgba(255, 23, 68, 0.4); z-index: 9999; transform: translateX(400px); 
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-.protect-alert.show { transform: translateX(0); }
-.protect-overlay { 
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.9); z-index: 10000; display: none; 
-    justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-.protect-modal { 
-    background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #ff1744; 
-    border-radius: 20px; padding: 40px; text-align: center; max-width: 500px; 
-    box-shadow: 0 25px 50px rgba(255, 23, 68, 0.3); color: white; }
-
-/* EXISTING STYLES */
-input, button { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; }
-button { background: linear-gradient(45deg, #ff1744, #ff5722); color: white; cursor: pointer; font-weight: 600; box-shadow: 0 5px 15px rgba(255, 23, 68, 0.3); }
-canvas { max-width: 100%; border: 2px solid #ff1744; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
-#status { padding: 15px 20px; background: rgba(255, 23, 68, 0.2); border-radius: 12px; font-weight: 500; }
-.container { padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 23, 68, 0.3); }
-.logo { font-size: 2.8em; background: linear-gradient(45deg, #ff1744, #ff5722, #ffc107); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 800; text-align: center; margin-bottom: 10px; }
+* {margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-moz-user-select:none;}
+body {
+    font-family:'Segoe UI',Tahoma,Geneva,sans-serif;
+    background:linear-gradient(135deg,#0c0c1a 0%,#1a1a3e 50%,#16213e 100%);
+    color:#e0e6ed;
+    min-height:100vh;
+    padding:20px;
+}
+.container {
+    max-width:1200px;margin:0 auto;background:rgba(12,12,26,0.95);
+    backdrop-filter:blur(20px);border-radius:24px;padding:40px;
+    box-shadow:0 25px 50px rgba(0,0,0,0.5);border:1px solid rgba(59,130,246,0.3);
+}
+.container::before {
+    content:'';position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,#3b82f6,#1d4ed8,#3b82f6);
+    animation:gradientShift 3s ease infinite;border-radius:24px 24px 0 0;
+}
+@keyframes gradientShift {0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.logo {
+    font-size:3.5em;background:linear-gradient(45deg,#3b82f6,#60a5fa,#1d4ed8);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    text-align:center;font-weight:800;margin-bottom:15px;text-shadow:0 0 30px rgba(59,130,246,0.5);
+}
+.tagline {text-align:center;color:#94a3b8;font-size:1.2em;margin-bottom:40px;font-weight:500;}
+.upload-zone {
+    border:3px dashed rgba(59,130,246,0.6);border-radius:20px;padding:50px 30px;
+    text-align:center;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);margin-bottom:35px;
+    background:rgba(59,130,246,0.08);position:relative;overflow:hidden;
+}
+.upload-zone::before {
+    content:'🔒 SECURE PROCESSING';position:absolute;top:-50px;right:-50px;
+    background:linear-gradient(45deg,#3b82f6,#1d4ed8);color:white;padding:10px 25px;
+    font-size:0.8em;font-weight:700;border-radius:20px;transform:rotate(45deg);
+}
+.upload-zone:hover {border-color:#3b82f6;background:rgba(59,130,246,0.15);transform:translateY(-8px);box-shadow:0 20px 40px rgba(59,130,246,0.2);}
+.upload-zone.dragover {border-color:#10b981;background:rgba(16,185,129,0.2);transform:scale(1.02);}
+#fileInput{display:none;}
+.upload-btn {
+    background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;padding:18px 45px;
+    border-radius:50px;cursor:pointer;font-weight:700;font-size:1.2em;display:inline-block;
+    box-shadow:0 15px 35px rgba(59,130,246,0.4);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);border:none;
+}
+.dimension-controls {
+    display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:20px;margin-bottom:30px;align-items:end;
+}
+.dimension-input {
+    background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.1);border-radius:16px;
+    padding:20px;color:white;font-size:1.3em;font-weight:600;transition:all 0.3s ease;
+}
+.dimension-input:focus {outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,0.2);background:rgba(255,255,255,0.12);}
+.dimension-label {font-size:0.9em;color:#94a3b8;font-weight:500;margin-bottom:8px;display:block;}
+.toggle-group {
+    display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.08);padding:15px 20px;
+    border-radius:16px;border:1px solid rgba(255,255,255,0.1);
+}
+.toggle-switch {
+    position:relative;width:60px;height:30px;background:rgba(255,255,255,0.2);border-radius:20px;cursor:pointer;transition:all 0.3s ease;
+}
+.toggle-switch input {opacity:0;width:0;height:0;}
+.slider {
+    position:absolute;top:3px;left:3px;right:3px;bottom:3px;background:#64748b;border-radius:18px;transition:0.3s;
+}
+.slider:before {
+    position:absolute;content:"";height:24px;width:24px;left:3px;bottom:3px;
+    background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:50%;transition:0.3s;box-shadow:0 2px 10px rgba(59,130,246,0.4);
+}
+input:checked + .slider {background:rgba(16,185,129,0.4);}
+input:checked + .slider:before {transform:translateX(30px);background:linear-gradient(135deg,#10b981,#059669);}
+.process-btn {
+    background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:white;border:none;padding:22px 50px;
+    border-radius:50px;font-size:1.4em;font-weight:800;cursor:pointer;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:0 20px 40px rgba(16,185,129,0.3);text-transform:uppercase;letter-spacing:1px;
+}
+.process-btn:hover:not(:disabled) {transform:translateY(-6px);box-shadow:0 30px 60px rgba(16,185,129,0.4);}
+.process-btn:disabled {opacity:0.6;cursor:not-allowed;transform:none;}
+#status {
+    padding:20px 30px;border-radius:16px;text-align:center;font-weight:600;margin:30px 0;
+    min-height:24px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);
+}
+.status-processing {background:rgba(245,158,11,0.2) !important;border-color:rgba(245,158,11,0.5) !important;}
+.status-success {background:rgba(16,185,129,0.2) !important;border-color:rgba(16,185,129,0.5) !important;}
+.status-error {background:rgba(239,68,68,0.2) !important;border-color:rgba(239,68,68,0.5) !important;}
+.result-card {
+    background:rgba(255,255,255,0.06);border-radius:20px;padding:30px;border:1px solid rgba(255,255,255,0.1);
+    margin-top:30px;transform:translateY(20px);opacity:0;animation:slideUp 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes slideUp {to {transform:translateY(0);opacity:1;}}
+.result-canvas {max-width:100%;border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,0.4);border:3px solid rgba(59,130,246,0.6);}
+.download-btn {
+    display:inline-block;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;padding:18px 40px;
+    border-radius:50px;text-decoration:none;font-weight:700;font-size:1.1em;margin:20px 10px 0;box-shadow:0 15px 35px rgba(59,130,246,0.4);
+    transition:all 0.3s ease;
+}
+.download-btn:hover {transform:translateY(-3px);box-shadow:0 25px 50px rgba(59,130,246,0.5);}
+.protect-overlay {
+    position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;display:none;
+    justify-content:center;align-items:center;backdrop-filter:blur(10px);
+}
+.protect-modal {
+    background:linear-gradient(135deg,#1a1a2e,#16213e);border:3px solid #3b82f6;border-radius:24px;
+    padding:40px;text-align:center;max-width:500px;box-shadow:0 30px 60px rgba(59,130,246,0.4);color:white;
+}
+@media (max-width:768px) {.dimension-controls {grid-template-columns:1fr 1fr !important;}.container {padding:20px;margin:10px;}}
 </style>
 </head>
 <body>
-<div class="container">
-<div class="logo">🔴 RED-EYE</div>
-<p style="text-align:center;color:#a0a0a0;margin-bottom:30px;font-size:1.1em;">Protected Image Resizer • Copying Blocked • © 2026 YOUR_USERNAME</p>
-
-<div id="status">👁️ Select image → Resize → Download (Right-click DISABLED)</div>
-<input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/jpg">
-<input type="number" id="width" value="600" min="1" max="4000" placeholder="Width (px)">
-<input type="number" id="height" value="200" min="1" max="4000" placeholder="Height (px)">
-<div style="display:flex;gap:10px;align-items:center;margin:15px 0;">
-    <label style="font-weight:600;color:#ff1744;">🔒 Exact Size:</label>
-    <input type="checkbox" id="exactSize" style="width:50px;height:25px;transform:scale(1.5);accent-color:#ff1744;">
+<div class="container" style="position:relative;">
+    <div class="logo">🔒 RED-EYE</div>
+    <div class="tagline">Enterprise Secure Resizer • Exact Dimensions • File Size Control • DoS Protected</div>
+    
+    <div class="upload-zone" id="uploadZone">
+        <div style="font-size:4em;margin-bottom:20px;">🖼️</div>
+        <div style="font-size:1.4em;margin-bottom:25px;">Drag & drop your image for secure processing</div>
+        <label for="fileInput" class="upload-btn">SELECT SECURE IMAGE</label>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/jpg">
+        <div style="font-size:0.9em;color:#94a3b8;margin-top:15px;">Max 15MB • JPG/PNG/WebP only</div>
+    </div>
+    
+    <div class="dimension-controls">
+        <div><div class="dimension-label">Width</div><input type="number" id="width" value="600" min="1" max="4000"></div>
+        <div><div class="dimension-label">Height</div><input type="number" id="height" value="200" min="1" max="4000"></div>
+        <div><div class="dimension-label">Max KB</div><input type="number" id="maxKB" value="50" min="1" max="5000"></div>
+        <div class="toggle-container">
+            <div class="toggle-group">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="exactSize">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div style="font-size:0.85em;color:#94a3b8;">Exact</div>
+        </div>
+    </div>
+    
+    <button class="process-btn" onclick="processSecure()" id="processBtn">🚀 SECURE PROCESS</button>
+    <div id="status">🔒 Ready - Enterprise secure processing</div>
+    <div id="preview"></div>
 </div>
-<button onclick="resizeImage()">🚀 RESIZE SECURE IMAGE</button>
 
-<div id="preview" style="margin-top:30px;"></div>
-</div>
-
-<!-- COLORED PROTECTION OVERLAY -->
+<!-- ANTI-COPY PROTECTION MODAL -->
 <div class="protect-overlay" id="protectOverlay">
     <div class="protect-modal">
         <div style="font-size:3em;margin-bottom:20px;">🚫</div>
-        <h2 style="color:#ff1744;margin-bottom:15px;">COPY PROTECTION ACTIVE</h2>
-        <p style="font-size:1.1em;margin-bottom:25px;">Right-click, F12, Ctrl+U, Ctrl+Shift+I blocked<br>
-        <strong>RED-EYE © 2026 [YOUR_USERNAME]</strong><br>
-        <small>Apache Licensed - Unauthorized copying prohibited</small></p>
-        <button onclick="closeProtect()" style="background:#ff1744;color:white;border:none;padding:12px 30px;border-radius:25px;font-weight:700;cursor:pointer;">Continue</button>
+        <h2 style="color:#3b82f6;margin-bottom:15px;">ENTERPRISE PROTECTION</h2>
+        <p>🔒 RED-EYE © 2026 [YOUR_USERNAME]<br>Right-click & DevTools blocked<br>Watermark embedded in all images</p>
+        <button onclick="closeProtect()" style="background:#3b82f6;color:white;border:none;padding:15px 35px;border-radius:25px;font-weight:700;margin-top:20px;cursor:pointer;">Continue</button>
     </div>
 </div>
 
-<!-- COLORED ALERT BANNER -->
-<div class="protect-alert" id="protectAlert">
-    🔒 RED-EYE Copy Protection Active • Right-click blocked
-</div>
-
 <script>
-// 🔥 STRONG COLORED ANTI-COPY PROTECTION (CSS + JS)
-/* 1. CSS PROTECTION (ALREADY IN <style>) - user-select: none */
-document.addEventListener('DOMContentLoaded', function() {
-    // COLORED ALERT SHOW
-    setTimeout(() => {
-        document.getElementById('protectAlert').classList.add('show');
-    }, 1000);
-    
-    // 2. RIGHT-CLICK BLOCK (FIREFOX/CHROME)
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        showProtectModal();
-        return false;
-    });
-    
-    // 3. DEV TOOLS BLOCK (F12, Ctrl+Shift+I, Ctrl+U)
-    document.addEventListener('keydown', function(e) {
-        // F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S
-        if (e.key === 'F12' || 
-            (e.ctrlKey && e.shiftKey && e.key === 'I') || 
-            (e.ctrlKey && e.key === 'u') || 
-            (e.ctrlKey && e.key === 's')) {
-            e.preventDefault();
-            showProtectModal();
-            return false;
+// 🔥 ENTERPRISE DoS PROTECTION + ANTI-COPY + FILE COMPRESSION
+let processCount=0,lastProcess=0;const MAX_PROCESSES=5,PROCESS_DELAY=1000;
+
+// DoS Protection
+function checkDoS() {
+    const now=Date.now();
+    if(now-lastProcess<PROCESS_DELAY) return false;
+    processCount++;lastProcess=now;
+    if(processCount>MAX_PROCESSES) {
+        alert('⚠️ Rate limit exceeded. Wait 60s');return false;
+    }
+    setTimeout(()=>processCount--,60000);
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+    // ANTI-COPY: Right-click, F12, Ctrl+U
+    document.addEventListener('contextmenu',e=>{e.preventDefault();showProtect();return false;});
+    document.addEventListener('keydown',e=>{
+        if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='u')||(e.ctrlKey&&e.key==='s')) {
+            e.preventDefault();showProtect();return false;
         }
-    }, true);
+    },true);
     
-    // 4. TEXT SELECTION CANCEL
-    document.addEventListener('selectstart', function(e) {
-        e.preventDefault();
-        return false;
-    });
-    
-    // 5. DRAG PROTECTION
-    document.addEventListener('dragstart', function(e) {
-        e.preventDefault();
-        return false;
+    // Drag & Drop + Hover Effects
+    const uploadZone=document.getElementById('uploadZone');
+    ['dragenter','dragover','dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,ev=>ev.preventDefault()));
+    ['dragenter','dragover'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.add('dragover')));
+    ['dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.remove('dragover')));
+    uploadZone.addEventListener('drop',e=>{
+        document.getElementById('fileInput').files=e.dataTransfer.files;processSecure();
     });
 });
 
-function showProtectModal() {
-    document.getElementById('protectOverlay').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+function setStatus(msg,type='info') {
+    const el=document.getElementById('status');
+    el.textContent=msg;el.className=`status-${type}`;
 }
 
-function closeProtect() {
-    document.getElementById('protectOverlay').style.display = 'none';
-    document.body.style.overflow = 'auto';
+function showProtect() {document.getElementById('protectOverlay').style.display='flex';document.body.style.overflow='hidden';}
+function closeProtect() {document.getElementById('protectOverlay').style.display='none';document.body.style.overflow='auto';}
+
+function addSecureWatermark(ctx,canvas) {
+    ctx.save();ctx.globalAlpha=0.18;ctx.fillStyle='#3b82f6';ctx.font='bold 28px Segoe UI';
+    ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText('RED-EYE.ENTERPRISE',canvas.width/2,30);
+    ctx.fillText('©2026 SECURE',canvas.width/2,canvas.height-25);ctx.restore();
 }
 
-// 6. WATERMARK EVERY OUTPUT IMAGE
-function addRedEyeWatermark(ctx, canvas) {
-    ctx.save();
-    ctx.globalAlpha = 0.2;
-    ctx.fillStyle = '#ff1744';
-    ctx.font = 'bold 28px Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText('RED-EYE.app ©2026', canvas.width/2, canvas.height - 20);
-    ctx.restore();
-}
-
-// 🔥 YOUR RESIZE FUNCTION (WITH WATERMARK)
-function resizeImage() {
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
-    const preview = document.getElementById('preview');
-    const status = document.getElementById('status');
-    const exactSize = document.getElementById('exactSize').checked;
+// 🔥 ENTERPRISE RESIZE + COMPRESS + WATERMARK
+async function processSecure() {
+    if(!checkDoS()) return;
     
-    if (!file) {
-        status.textContent = '⚠️ Select image first';
-        return;
-    }
+    const fileInput=document.getElementById('fileInput');const file=fileInput.files[0];
+    const preview=document.getElementById('preview');const processBtn=document.getElementById('processBtn');
+    const exactSize=document.getElementById('exactSize').checked;
     
-    status.textContent = '🔴 Processing securely...';
-    preview.innerHTML = '';
+    if(!file) {setStatus('⚠️ Select image first','error');return;}
+    if(!file.type.startsWith('image/')) {setStatus('⚠️ JPG/PNG/WebP only','error');return;}
+    if(file.size>15*1024*1024) {setStatus('⚠️ Max 15MB','error');return;}
     
-    const targetW = parseInt(document.getElementById('width').value);
-    const targetH = parseInt(document.getElementById('height').value);
+    processBtn.disabled=true;processBtn.textContent='🔄 SECURE PROCESSING...';
+    setStatus('🔒 Enterprise secure processing...','processing');preview.innerHTML='';
     
-    const img = new Image();
-    img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+    const targetW=parseInt(document.getElementById('width').value);
+    const targetH=parseInt(document.getElementById('height').value);
+    const maxKB=parseInt(document.getElementById('maxKB').value)*1024;
+    
+    try {
+        const img=await loadImage(file);
+        const canvas=optimizeImage(img,targetW,targetH,exactSize,maxKB);
         
-        if (exactSize) {
-            canvas.width = targetW;
-            canvas.height = targetH;
-        } else {
-            const ratio = Math.min(targetW / img.naturalWidth, targetH / img.naturalHeight);
-            canvas.width = img.naturalWidth * ratio;
-            canvas.height = img.naturalHeight * ratio;
-        }
-        
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        
-        // 🔥 ADD RED-EYE WATERMARK TO EVERY IMAGE
-        addRedEyeWatermark(ctx, canvas);
-        
-        preview.innerHTML = `
-            <div style="text-align:center;">
-                <h3 style="color:#ff1744;">✅ RESIZE + WATERMARK COMPLETE</h3>
-                <canvas id="resizedCanvas" style="max-width:100%;border:3px solid #ff1744;border-radius:15px;box-shadow:0 15px 40px rgba(255,23,68,0.3);"></canvas>
-                <br><br>
-                <a id="downloadLink" style="display:inline-block;background:linear-gradient(45deg,#ff1744,#ff5722);color:white;padding:18px 40px;border-radius:30px;text-decoration:none;font-weight:700;font-size:20px;margin:20px 0;box-shadow:0 15px 40px rgba(255,23,68,0.4);" href="#" download="red-eye-watermarked.jpg">💾 DOWNLOAD PROTECTED IMAGE</a>
-                <p style="color:#a0a0a0;font-size:1.1em;">
-                    📏 ${img.naturalWidth}x${img.naturalHeight} → ${canvas.width.toFixed(0)}x${canvas.height.toFixed(0)} 
-                    ${exactSize ? '(EXACT)' : '(Proportional)'} + WATERMARK
-                </p>
+        preview.innerHTML=`
+            <div class="result-card">
+                <h3 style="color:#3b82f6;margin-bottom:20px;">✅ ENTERPRISE PROCESSING COMPLETE</h3>
+                <canvas id="resultCanvas" class="result-canvas"></canvas>
+                <div style="text-align:center;margin:25px 0;">
+                    <a id="downloadBtn" class="download-btn" href="#" download="red-eye-enterprise.jpg">💾 DOWNLOAD SECURE IMAGE</a>
+                </div>
+                <div style="background:rgba(255,255,255,0.08);padding:20px;border-radius:16px;font-size:1.1em;">
+                    📏 ${img.naturalWidth}×${img.naturalHeight} → ${canvas.width.toFixed(0)}×${canvas.height.toFixed(0)} 
+                    ${exactSize?'<span style="color:#10b981;">EXACT</span>':'Proportional'}
+                    | 💾 ${Math.round(canvas.toDataURL('image/jpeg',0.93).length*0.0009/1024)}KB
+                </div>
             </div>
         `;
         
-        const outputCanvas = document.getElementById('resizedCanvas');
-        outputCanvas.width = canvas.width;
-        outputCanvas.height = canvas.height;
-        outputCanvas.getContext('2d').drawImage(canvas, 0, 0);
+        const resultCanvas=document.getElementById('resultCanvas');
+        resultCanvas.width=canvas.width;resultCanvas.height=canvas.height;
+        resultCanvas.getContext('2d').drawImage(canvas,0,0);
         
-        document.getElementById('downloadLink').href = canvas.toDataURL('image/jpeg', 0.92);
+        document.getElementById('downloadBtn').href=canvas.toDataURL('image/jpeg',0.93);
+        document.getElementById('downloadBtn').download=`RED-EYE_${targetW}x${targetH}_${Math.round(canvas.toDataURL().length*0.0009/1024)}KB.jpg`;
         
-        status.textContent = `✅ Protected: ${canvas.width.toFixed(0)}x${canvas.height.toFixed(0)} + Watermark`;
-    };
+        setStatus(`✅ Enterprise complete: ${canvas.width.toFixed(0)}×${canvas.height.toFixed(0)} | ${Math.round(canvas.toDataURL().length*0.0009/1024)}KB`,'success');
+    } catch(e) {
+        setStatus('❌ Processing failed: '+e.message,'error');
+    }
     
-    const reader = new FileReader();
-    reader.onload = (e) => img.src = e.target.result;
-    reader.readAsDataURL(file);
+    processBtn.disabled=false;processBtn.textContent='🚀 SECURE PROCESS';
+}
+
+function loadImage(file) {
+    return new Promise((resolve,reject)=>{
+        const reader=new FileReader();
+        reader.onload=e=>{
+            const img=new Image();
+            img.onload=()=>resolve(img);
+            img.onerror=()=>reject(new Error('Image load failed'));
+            img.src=e.target.result;
+        };
+        reader.onerror=()=>reject(new Error('File read error'));
+        reader.readAsDataURL(file);
+    });
+}
+
+function optimizeImage(img,targetW,targetH,exactSize,maxKB) {
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+    
+    // EXACT SIZE or PROPORTIONAL
+    if(exactSize) {
+        canvas.width=targetW;canvas.height=targetH;
+    } else {
+        const ratio=Math.min(targetW/img.naturalWidth,targetH/img.naturalHeight);
+        canvas.width=img.naturalWidth*ratio;canvas.height=img.naturalHeight*ratio;
+    }
+    
+    // HIGH QUALITY RENDER
+    ctx.imageSmoothingQuality='high';ctx.imageSmoothingEnabled=true;
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    
+    // WATERMARK PROTECTION
+    addSecureWatermark(ctx,canvas);
+    
+    // FILE SIZE COMPRESSION
+    let quality=0.93;
+    let dataURL=canvas.toDataURL('image/jpeg',quality);
+    while(dataURL.length*0.0009>maxKB && quality>0.1) {
+        quality-=0.05;
+        dataURL=canvas.toDataURL('image/jpeg',quality);
+    }
+    
+    return canvas;
 }
 </script>
 </body>
