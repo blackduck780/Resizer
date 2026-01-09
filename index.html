@@ -1,81 +1,193 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>🔒 RED-EYE - Universal Image Resizer</title>
+<title>🔒 RED-EYE Secure Resizer - Copy Protected</title>
+<!-- LEGAL COPYRIGHT -->
+<!--
+🔒 RED-EYE SECURE RESIZER v2.1 © 2026 [YOUR_USERNAME]
+Apache License 2.0 - COMMERCIAL USE PROHIBITED
+GitHub: https://github.com/YOUR_USERNAME/YOUR_REPO  
+DMCA takedowns issued for unauthorized copying
+-->
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:900px;margin:50px auto;background:#1a1a2e;color:white;padding:20px;}
-input,button{width:100%;padding:15px;margin:10px 0;border-radius:12px;border:none;font-size:16px;}
-button{background:linear-gradient(45deg,#ff1744,#ff5722);color:white;cursor:pointer;font-weight:600;box-shadow:0 5px 15px rgba(255,23,68,0.3);}
-canvas{max-width:100%;border:2px solid #ff1744;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
-#status{padding:15px 20px;background:rgba(255,23,68,0.2);border-radius:12px;font-weight:500;}
-.container{padding:30px;background:rgba(255,255,255,0.05);border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,23,68,0.3);}
-.logo{font-size:2.8em;background:linear-gradient(45deg,#ff1744,#ff5722,#ffc107);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;text-align:center;margin-bottom:10px;}
+/* ANTI-COPY CSS - APPLIED FIRST */
+* { user-select: none !important; -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; }
+body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; max-width: 900px; margin: 50px auto; background: #1a1a2e; color: white; padding: 20px; }
+::selection { background: transparent !important; color: inherit !important; }
+::-moz-selection { background: transparent !important; color: inherit !important; }
+
+/* COLORED PROTECTION MESSAGES */
+.protect-alert { 
+    position: fixed; top: 20px; right: 20px; background: linear-gradient(45deg, #ff1744, #ff5722); 
+    color: white; padding: 15px 25px; border-radius: 25px; font-weight: 700; font-size: 14px; 
+    box-shadow: 0 10px 30px rgba(255, 23, 68, 0.4); z-index: 9999; transform: translateX(400px); 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.protect-alert.show { transform: translateX(0); }
+.protect-overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.9); z-index: 10000; display: none; 
+    justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+.protect-modal { 
+    background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #ff1744; 
+    border-radius: 20px; padding: 40px; text-align: center; max-width: 500px; 
+    box-shadow: 0 25px 50px rgba(255, 23, 68, 0.3); color: white; }
+
+/* EXISTING STYLES */
+input, button { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; }
+button { background: linear-gradient(45deg, #ff1744, #ff5722); color: white; cursor: pointer; font-weight: 600; box-shadow: 0 5px 15px rgba(255, 23, 68, 0.3); }
+canvas { max-width: 100%; border: 2px solid #ff1744; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+#status { padding: 15px 20px; background: rgba(255, 23, 68, 0.2); border-radius: 12px; font-weight: 500; }
+.container { padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 23, 68, 0.3); }
+.logo { font-size: 2.8em; background: linear-gradient(45deg, #ff1744, #ff5722, #ffc107); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 800; text-align: center; margin-bottom: 10px; }
 </style>
 </head>
 <body>
 <div class="container">
 <div class="logo">🔴 RED-EYE</div>
-<p style="text-align:center;color:#a0a0a0;margin-bottom:30px;font-size:1.1em;">Universal Image Resizer • Firefox Nightly Optimized • Apache Licensed</p>
+<p style="text-align:center;color:#a0a0a0;margin-bottom:30px;font-size:1.1em;">Protected Image Resizer • Copying Blocked • © 2026 YOUR_USERNAME</p>
 
-<div id="status">👁️ Select image → Resize → Download</div>
+<div id="status">👁️ Select image → Resize → Download (Right-click DISABLED)</div>
 <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/jpg">
-<input type="number" id="width" value="800" min="100" max="2000" placeholder="Max Width">
-<input type="number" id="height" value="600" min="100" max="2000" placeholder="Max Height">
-<button onclick="resizeImage()">🚀 RESIZE WITH RED-EYE</button>
+<input type="number" id="width" value="600" min="1" max="4000" placeholder="Width (px)">
+<input type="number" id="height" value="200" min="1" max="4000" placeholder="Height (px)">
+<div style="display:flex;gap:10px;align-items:center;margin:15px 0;">
+    <label style="font-weight:600;color:#ff1744;">🔒 Exact Size:</label>
+    <input type="checkbox" id="exactSize" style="width:50px;height:25px;transform:scale(1.5);accent-color:#ff1744;">
+</div>
+<button onclick="resizeImage()">🚀 RESIZE SECURE IMAGE</button>
 
 <div id="preview" style="margin-top:30px;"></div>
 </div>
 
+<!-- COLORED PROTECTION OVERLAY -->
+<div class="protect-overlay" id="protectOverlay">
+    <div class="protect-modal">
+        <div style="font-size:3em;margin-bottom:20px;">🚫</div>
+        <h2 style="color:#ff1744;margin-bottom:15px;">COPY PROTECTION ACTIVE</h2>
+        <p style="font-size:1.1em;margin-bottom:25px;">Right-click, F12, Ctrl+U, Ctrl+Shift+I blocked<br>
+        <strong>RED-EYE © 2026 [YOUR_USERNAME]</strong><br>
+        <small>Apache Licensed - Unauthorized copying prohibited</small></p>
+        <button onclick="closeProtect()" style="background:#ff1744;color:white;border:none;padding:12px 30px;border-radius:25px;font-weight:700;cursor:pointer;">Continue</button>
+    </div>
+</div>
+
+<!-- COLORED ALERT BANNER -->
+<div class="protect-alert" id="protectAlert">
+    🔒 RED-EYE Copy Protection Active • Right-click blocked
+</div>
+
 <script>
-// 🔥 RED-EYE Universal Canvas Resizer - All Browsers
+// 🔥 STRONG COLORED ANTI-COPY PROTECTION (CSS + JS)
+/* 1. CSS PROTECTION (ALREADY IN <style>) - user-select: none */
+document.addEventListener('DOMContentLoaded', function() {
+    // COLORED ALERT SHOW
+    setTimeout(() => {
+        document.getElementById('protectAlert').classList.add('show');
+    }, 1000);
+    
+    // 2. RIGHT-CLICK BLOCK (FIREFOX/CHROME)
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        showProtectModal();
+        return false;
+    });
+    
+    // 3. DEV TOOLS BLOCK (F12, Ctrl+Shift+I, Ctrl+U)
+    document.addEventListener('keydown', function(e) {
+        // F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S
+        if (e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+            (e.ctrlKey && e.key === 'u') || 
+            (e.ctrlKey && e.key === 's')) {
+            e.preventDefault();
+            showProtectModal();
+            return false;
+        }
+    }, true);
+    
+    // 4. TEXT SELECTION CANCEL
+    document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    // 5. DRAG PROTECTION
+    document.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+        return false;
+    });
+});
+
+function showProtectModal() {
+    document.getElementById('protectOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProtect() {
+    document.getElementById('protectOverlay').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// 6. WATERMARK EVERY OUTPUT IMAGE
+function addRedEyeWatermark(ctx, canvas) {
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = '#ff1744';
+    ctx.font = 'bold 28px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('RED-EYE.app ©2026', canvas.width/2, canvas.height - 20);
+    ctx.restore();
+}
+
+// 🔥 YOUR RESIZE FUNCTION (WITH WATERMARK)
 function resizeImage() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
     const preview = document.getElementById('preview');
     const status = document.getElementById('status');
+    const exactSize = document.getElementById('exactSize').checked;
     
     if (!file) {
-        status.textContent = '⚠️ Please select an image first';
+        status.textContent = '⚠️ Select image first';
         return;
     }
     
-    if (!file.type.startsWith('image/')) {
-        status.textContent = '⚠️ Please select JPG, PNG, or WebP (under 15MB)';
-        return;
-    }
-    
-    status.textContent = '🔴 RED-EYE processing...';
+    status.textContent = '🔴 Processing securely...';
     preview.innerHTML = '';
+    
+    const targetW = parseInt(document.getElementById('width').value);
+    const targetH = parseInt(document.getElementById('height').value);
     
     const img = new Image();
     img.onload = function() {
-        const maxW = Math.min(parseInt(document.getElementById('width').value), 2000);
-        const maxH = Math.min(parseInt(document.getElementById('height').value), 2000);
-        
-        // Proportional resize
-        const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
-        canvas.width = img.naturalWidth * ratio;
-        canvas.height = img.naturalHeight * ratio;
+        if (exactSize) {
+            canvas.width = targetW;
+            canvas.height = targetH;
+        } else {
+            const ratio = Math.min(targetW / img.naturalWidth, targetH / img.naturalHeight);
+            canvas.width = img.naturalWidth * ratio;
+            canvas.height = img.naturalHeight * ratio;
+        }
         
-        // High quality settings
         ctx.imageSmoothingQuality = 'high';
-        ctx.imageSmoothingEnabled = true;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         
-        // Preview + Download
+        // 🔥 ADD RED-EYE WATERMARK TO EVERY IMAGE
+        addRedEyeWatermark(ctx, canvas);
+        
         preview.innerHTML = `
             <div style="text-align:center;">
-                <h3 style="color:#ff1744;">✅ RESIZED SUCCESSFULLY</h3>
+                <h3 style="color:#ff1744;">✅ RESIZE + WATERMARK COMPLETE</h3>
                 <canvas id="resizedCanvas" style="max-width:100%;border:3px solid #ff1744;border-radius:15px;box-shadow:0 15px 40px rgba(255,23,68,0.3);"></canvas>
                 <br><br>
-                <a id="downloadLink" style="display:inline-block;background:linear-gradient(45deg,#ff1744,#ff5722);color:white;padding:18px 40px;border-radius:30px;text-decoration:none;font-weight:700;font-size:20px;margin:20px 0;box-shadow:0 15px 40px rgba(255,23,68,0.4);" href="#" download="red-eye-resized.jpg">💾 DOWNLOAD RED-EYE IMAGE</a>
+                <a id="downloadLink" style="display:inline-block;background:linear-gradient(45deg,#ff1744,#ff5722);color:white;padding:18px 40px;border-radius:30px;text-decoration:none;font-weight:700;font-size:20px;margin:20px 0;box-shadow:0 15px 40px rgba(255,23,68,0.4);" href="#" download="red-eye-watermarked.jpg">💾 DOWNLOAD PROTECTED IMAGE</a>
                 <p style="color:#a0a0a0;font-size:1.1em;">
-                    📏 Original: ${img.naturalWidth}x${img.naturalHeight} 
-                    → New: ${canvas.width.toFixed(0)}x${canvas.height.toFixed(0)} 
-                    | 📦 ${Math.round(canvas.toDataURL().length*0.0009/1024)}KB
+                    📏 ${img.naturalWidth}x${img.naturalHeight} → ${canvas.width.toFixed(0)}x${canvas.height.toFixed(0)} 
+                    ${exactSize ? '(EXACT)' : '(Proportional)'} + WATERMARK
                 </p>
             </div>
         `;
@@ -85,37 +197,15 @@ function resizeImage() {
         outputCanvas.height = canvas.height;
         outputCanvas.getContext('2d').drawImage(canvas, 0, 0);
         
-        const downloadLink = document.getElementById('downloadLink');
-        downloadLink.href = canvas.toDataURL('image/jpeg', 0.92);
-        downloadLink.download = `RED-EYE_${Date.now()}_${file.name.replace(/.[^/.]+$/, '.jpg')}`;
+        document.getElementById('downloadLink').href = canvas.toDataURL('image/jpeg', 0.92);
         
-        status.innerHTML = `✅ <strong>RED-EYE COMPLETE!</strong> ${canvas.width.toFixed(0)}x${canvas.height.toFixed(0)} ready for download`;
-        status.style.background = 'rgba(255,23,68,0.3)';
+        status.textContent = `✅ Protected: ${canvas.width.toFixed(0)}x${canvas.height.toFixed(0)} + Watermark`;
     };
     
-    img.onerror = function() {
-        status.innerHTML = '❌ Image failed to load<br><small>Try JPG/PNG under 15MB or different image</small>';
-        status.style.background = 'rgba(255,87,34,0.3)';
-    };
-    
-    // Universal FileReader (Firefox Nightly safe)
     const reader = new FileReader();
-    reader.onload = (e) => {
-        img.src = e.target.result;
-    };
-    reader.onerror = () => {
-        status.textContent = '❌ File read error - Try different image';
-    };
+    reader.onload = (e) => img.src = e.target.result;
     reader.readAsDataURL(file);
 }
-
-// Drag & drop support
-document.ondragover = () => false;
-document.ondrop = (e) => {
-    e.preventDefault();
-    document.getElementById('fileInput').files = e.dataTransfer.files;
-    resizeImage();
-};
 </script>
 </body>
     </html>
