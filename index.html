@@ -1,666 +1,386 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RED-EYE v4.0 - Photo Editor</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
-            color: #ffffff;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255, 0, 0, 0.1);
-            border: 2px solid #ff0000;
-            border-radius: 10px;
-        }
-
-        h1 {
-            color: #ff0000;
-            font-size: 2.5em;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #cccccc;
-            font-size: 0.9em;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .canvas-section {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #ff0000;
-            border-radius: 10px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 500px;
-        }
-
-        canvas {
-            max-width: 100%;
-            max-height: 450px;
-            border: 1px solid #ff6666;
-            border-radius: 5px;
-            background: #000;
-            cursor: crosshair;
-        }
-
-        .controls-section {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #ff0000;
-            border-radius: 10px;
-            padding: 20px;
-            overflow-y: auto;
-            max-height: 600px;
-        }
-
-        .control-group {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
-        }
-
-        .control-group:last-child {
-            border-bottom: none;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ff6666;
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-
-        input[type="file"],
-        input[type="range"],
-        select,
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 5px;
-            border: 1px solid #ff0000;
-            border-radius: 5px;
-            background: rgba(255, 0, 0, 0.1);
-            color: #ffffff;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        input[type="range"] {
-            padding: 5px;
-            cursor: range;
-        }
-
-        button {
-            background: linear-gradient(135deg, #ff0000, #cc0000);
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        button:hover {
-            background: linear-gradient(135deg, #ff3333, #ff0000);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .slider-container input[type="range"] {
-            flex: 1;
-            margin-bottom: 0;
-        }
-
-        .slider-value {
-            color: #ff6666;
-            font-weight: bold;
-            min-width: 50px;
-            text-align: right;
-        }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .button-group button {
-            margin-bottom: 0;
-        }
-
-        .info-section {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #ff0000;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .info-text {
-            color: #cccccc;
-            font-size: 0.9em;
-            line-height: 1.6;
-        }
-
-        .feature-list {
-            list-style: none;
-            margin-top: 10px;
-        }
-
-        .feature-list li {
-            padding: 5px 0;
-            color: #ff6666;
-        }
-
-        .feature-list li:before {
-            content: "► ";
-            margin-right: 8px;
-        }
-
-        @media (max-width: 900px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .canvas-section {
-                min-height: 400px;
-            }
-        }
-
-        .reset-warning {
-            color: #ffaa00;
-            font-size: 0.8em;
-            margin-top: 5px;
-        }
-
-        .history-info {
-            color: #88ff88;
-            font-size: 0.8em;
-            margin-top: 5px;
-        }
-    </style>
+<title>🔒 RED-EYE Enterprise Secure Resizer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- COPYRIGHT PROTECTION -->
+<!--
+🔒 RED-EYE ENTERPRISE v3.0 © 2026 [YOUR_USERNAME] 
+Apache License 2.0 - Commercial Use Prohibited
+DMCA protected - https://github.com/YOUR_USERNAME/YOUR_REPO
+-->
+<style>
+* {margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-moz-user-select:none;}
+body {
+    font-family:'Segoe UI',Tahoma,Geneva,sans-serif;
+    background:linear-gradient(135deg,#0c0c1a 0%,#1a1a3e 50%,#16213e 100%);
+    color:#e0e6ed;
+    min-height:100vh;
+    padding:20px;
+}
+.container {
+    max-width:1200px;margin:0 auto;background:rgba(12,12,26,0.95);
+    backdrop-filter:blur(20px);border-radius:24px;padding:40px;
+    box-shadow:0 25px 50px rgba(0,0,0,0.5);border:1px solid rgba(59,130,246,0.3);
+}
+.container::before {
+    content:'';position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,#3b82f6,#1d4ed8,#3b82f6);
+    animation:gradientShift 3s ease infinite;border-radius:24px 24px 0 0;
+}
+@keyframes gradientShift {0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.logo {
+    font-size:3.5em;background:linear-gradient(45deg,#3b82f6,#60a5fa,#1d4ed8);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    text-align:center;font-weight:800;margin-bottom:15px;text-shadow:0 0 30px rgba(59,130,246,0.5);
+}
+.tagline {text-align:center;color:#94a3b8;font-size:1.2em;margin-bottom:40px;font-weight:500;}
+.upload-zone {
+    border:3px dashed rgba(59,130,246,0.6);border-radius:20px;padding:50px 30px;
+    text-align:center;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);margin-bottom:35px;
+    background:rgba(59,130,246,0.08);position:relative;overflow:hidden;
+}
+.upload-zone::before {
+    content:'🔒 SECURE PROCESSING';position:absolute;top:-50px;right:-50px;
+    background:linear-gradient(45deg,#3b82f6,#1d4ed8);color:white;padding:10px 25px;
+    font-size:0.8em;font-weight:700;border-radius:20px;transform:rotate(45deg);
+}
+.upload-zone:hover {border-color:#3b82f6;background:rgba(59,130,246,0.15);transform:translateY(-8px);box-shadow:0 20px 40px rgba(59,130,246,0.2);}
+.upload-zone.dragover {border-color:#10b981;background:rgba(16,185,129,0.2);transform:scale(1.02);}
+#fileInput{display:none;}
+.upload-btn {
+    background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;padding:18px 45px;
+    border-radius:50px;cursor:pointer;font-weight:700;font-size:1.2em;display:inline-block;
+    box-shadow:0 15px 35px rgba(59,130,246,0.4);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);border:none;
+}
+.dimension-controls {
+    display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:20px;margin-bottom:30px;align-items:end;
+}
+.dimension-input {
+    background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.1);border-radius:16px;
+    padding:20px;color:white;font-size:1.3em;font-weight:600;transition:all 0.3s ease;
+}
+.dimension-input:focus {outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,0.2);background:rgba(255,255,255,0.12);}
+.dimension-label {font-size:0.9em;color:#94a3b8;font-weight:500;margin-bottom:8px;display:block;}
+.toggle-group {
+    display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.08);padding:15px 20px;
+    border-radius:16px;border:1px solid rgba(255,255,255,0.1);
+}
+.toggle-switch {
+    position:relative;width:60px;height:30px;background:rgba(255,255,255,0.2);border-radius:20px;cursor:pointer;transition:all 0.3s ease;
+}
+.toggle-switch input {opacity:0;width:0;height:0;}
+.slider {
+    position:absolute;top:3px;left:3px;right:3px;bottom:3px;background:#64748b;border-radius:18px;transition:0.3s;
+}
+.slider:before {
+    position:absolute;content:"";height:24px;width:24px;left:3px;bottom:3px;
+    background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:50%;transition:0.3s;box-shadow:0 2px 10px rgba(59,130,246,0.4);
+}
+input:checked + .slider {background:rgba(16,185,129,0.4);}
+input:checked + .slider:before {transform:translateX(30px);background:linear-gradient(135deg,#10b981,#059669);}
+.process-btn {
+    background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:white;border:none;padding:22px 50px;
+    border-radius:50px;font-size:1.4em;font-weight:800;cursor:pointer;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:0 20px 40px rgba(16,185,129,0.3);text-transform:uppercase;letter-spacing:1px;width:100%;
+}
+.process-btn:hover:not(:disabled) {transform:translateY(-6px);box-shadow:0 30px 60px rgba(16,185,129,0.4);}
+.process-btn:disabled {opacity:0.6;cursor:not-allowed;transform:none;}
+#status {
+    padding:20px 30px;border-radius:16px;text-align:center;font-weight:600;margin:30px 0;
+    min-height:24px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);
+}
+.status-processing {background:rgba(245,158,11,0.2) !important;border-color:rgba(245,158,11,0.5) !important;}
+.status-success {background:rgba(16,185,129,0.2) !important;border-color:rgba(16,185,129,0.5) !important;}
+.status-error {background:rgba(239,68,68,0.2) !important;border-color:rgba(239,68,68,0.5) !important;}
+.original-preview, .result-card {
+    background:rgba(255,255,255,0.06);border-radius:20px;padding:30px;border:1px solid rgba(255,255,255,0.1);
+    margin-top:30px;transform:translateY(20px);opacity:0;animation:slideUp 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes slideUp {to {transform:translateY(0);opacity:1;}}
+.preview-canvas {max-width:100%;max-height:300px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.3);border:2px solid rgba(59,130,246,0.4);}
+.result-canvas {max-width:100%;border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,0.4);border:3px solid rgba(59,130,246,0.6);}
+.download-btn {
+    display:inline-block;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;padding:18px 40px;
+    border-radius:50px;text-decoration:none;font-weight:700;font-size:1.1em;margin:20px 10px 0;box-shadow:0 15px 35px rgba(59,130,246,0.4);
+    transition:all 0.3s ease;
+}
+.download-btn:hover {transform:translateY(-3px);box-shadow:0 25px 50px rgba(59,130,246,0.5);}
+.protect-overlay {
+    position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;display:none;
+    justify-content:center;align-items:center;backdrop-filter:blur(10px);
+}
+.protect-modal {
+    background:linear-gradient(135deg,#1a1a2e,#16213e);border:3px solid #3b82f6;border-radius:24px;
+    padding:40px;text-align:center;max-width:500px;box-shadow:0 30px 60px rgba(59,130,246,0.4);color:white;
+}
+@media (max-width:768px) {.dimension-controls {grid-template-columns:1fr 1fr !important;}.container {padding:20px;margin:10px;}}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>RED-EYE v4.0</h1>
-            <p class="subtitle">Advanced Photo Editor with Modern Features</p>
-        </header>
-
-        <div class="info-section">
-            <p class="info-text">Welcome to RED-EYE v4.0! A powerful photo editing tool with professional-grade features.</p>
-            <ul class="feature-list">
-                <li>Image Enhancement (Brightness, Contrast, Saturation)</li>
-                <li>Rotation & Transform</li>
-                <li>Professional Filters</li>
-                <li>Undo/Redo History</li>
-                <li>Download Edited Photos</li>
-            </ul>
-        </div>
-
-        <div class="main-content">
-            <div class="canvas-section">
-                <canvas id="canvas"></canvas>
+<div class="container" style="position:relative;">
+    <div class="logo">🔒 RED-EYE</div>
+    <div class="tagline">Enterprise Secure Resizer • Exact Dimensions • File Size Control • DoS Protected</div>
+    
+    <div class="upload-zone" id="uploadZone">
+        <div style="font-size:4em;margin-bottom:20px;">🖼️</div>
+        <div style="font-size:1.4em;margin-bottom:25px;">Drag & drop your image for secure processing</div>
+        <label for="fileInput" class="upload-btn">SELECT SECURE IMAGE</label>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/jpg">
+        <div style="font-size:0.9em;color:#94a3b8;margin-top:15px;">Max 15MB • JPG/PNG/WebP only</div>
+    </div>
+    
+    <div class="dimension-controls">
+        <div><div class="dimension-label">Width</div><input type="number" id="width" value="600" min="1" max="4000"></div>
+        <div><div class="dimension-label">Height</div><input type="number" id="height" value="200" min="1" max="4000"></div>
+        <div><div class="dimension-label">Max KB</div><input type="number" id="maxKB" value="5" min="1" max="5000"></div>
+        <div class="toggle-container">
+            <div class="toggle-group">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="exactSize">
+                    <span class="slider"></span>
+                </label>
             </div>
-
-            <div class="controls-section">
-                <!-- File Upload -->
-                <div class="control-group">
-                    <label for="imageInput">Load Image</label>
-                    <input type="file" id="imageInput" accept="image/*">
-                </div>
-
-                <!-- Brightness Control -->
-                <div class="control-group">
-                    <label for="brightness">Brightness</label>
-                    <div class="slider-container">
-                        <input type="range" id="brightness" min="50" max="150" value="100">
-                        <span class="slider-value" id="brightnessValue">100%</span>
-                    </div>
-                </div>
-
-                <!-- Contrast Control -->
-                <div class="control-group">
-                    <label for="contrast">Contrast</label>
-                    <div class="slider-container">
-                        <input type="range" id="contrast" min="50" max="150" value="100">
-                        <span class="slider-value" id="contrastValue">100%</span>
-                    </div>
-                </div>
-
-                <!-- Saturation Control -->
-                <div class="control-group">
-                    <label for="saturation">Saturation</label>
-                    <div class="slider-container">
-                        <input type="range" id="saturation" min="0" max="200" value="100">
-                        <span class="slider-value" id="saturationValue">100%</span>
-                    </div>
-                </div>
-
-                <!-- Rotation Control -->
-                <div class="control-group">
-                    <label for="rotation">Rotation</label>
-                    <div class="slider-container">
-                        <input type="range" id="rotation" min="0" max="360" value="0">
-                        <span class="slider-value" id="rotationValue">0°</span>
-                    </div>
-                </div>
-
-                <!-- Quick Rotation Buttons -->
-                <div class="control-group">
-                    <label>Quick Rotate</label>
-                    <div class="button-group">
-                        <button onclick="rotateImage(-90)">← Rotate</button>
-                        <button onclick="rotateImage(90)">Rotate →</button>
-                    </div>
-                </div>
-
-                <!-- Flip Controls -->
-                <div class="control-group">
-                    <label>Flip</label>
-                    <div class="button-group">
-                        <button onclick="flipImage('horizontal')">Flip H</button>
-                        <button onclick="flipImage('vertical')">Flip V</button>
-                    </div>
-                </div>
-
-                <!-- Filter Selection -->
-                <div class="control-group">
-                    <label for="filterSelect">Apply Filter</label>
-                    <select id="filterSelect" onchange="applyFilter(this.value)">
-                        <option value="none">No Filter</option>
-                        <option value="grayscale">Grayscale</option>
-                        <option value="sepia">Sepia</option>
-                        <option value="invert">Invert</option>
-                        <option value="blur">Blur</option>
-                        <option value="sharpen">Sharpen</option>
-                        <option value="warm">Warm</option>
-                        <option value="cool">Cool</option>
-                    </select>
-                </div>
-
-                <!-- History Controls -->
-                <div class="control-group">
-                    <label>Edit History</label>
-                    <div class="button-group">
-                        <button id="undoBtn" onclick="undoEdit()" disabled>Undo</button>
-                        <button id="redoBtn" onclick="redoEdit()" disabled>Redo</button>
-                    </div>
-                    <p class="history-info" id="historyInfo"></p>
-                </div>
-
-                <!-- Reset & Download -->
-                <div class="control-group">
-                    <label>Actions</label>
-                    <button onclick="resetImage()" id="resetBtn" disabled>Reset to Original</button>
-                    <p class="reset-warning">Resets all edits and clears history</p>
-                </div>
-
-                <div class="control-group">
-                    <button onclick="downloadImage()" id="downloadBtn" disabled style="background: linear-gradient(135deg, #00aa00, #008800);">Download Image</button>
-                </div>
-            </div>
+            <div style="font-size:0.85em;color:#94a3b8;">Exact</div>
         </div>
     </div>
+    
+    <button class="process-btn" onclick="processSecure()" id="processBtn">🚀 SECURE PROCESS</button>
+    <div id="status">🔒 Ready - Enterprise secure processing</div>
+    <div id="preview"></div>
+</div>
 
-    <script>
-        // Canvas and context
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+<!-- ANTI-COPY PROTECTION MODAL -->
+<div class="protect-overlay" id="protectOverlay">
+    <div class="protect-modal">
+        <div style="font-size:3em;margin-bottom:20px;">🚫</div>
+        <h2 style="color:#3b82f6;margin-bottom:15px;">ENTERPRISE PROTECTION</h2>
+        <p>🔒 RED-EYE © 2026 [YOUR_USERNAME]<br>Right-click & DevTools blocked<br>Watermark embedded in all images</p>
+        <button onclick="closeProtect()" style="background:#3b82f6;color:white;border:none;padding:15px 35px;border-radius:25px;font-weight:700;margin-top:20px;cursor:pointer;">Continue</button>
+    </div>
+</div>
 
-        // Image and state variables
-        let originalImage = null;
-        let currentImage = null;
-        let imageLoaded = false;
+<script>
+// 🔥 ENTERPRISE DoS PROTECTION + CHROME FIX + ORIGINAL BLUE THEME
+let processCount=0,lastProcess=0,originalImg=null;
+const MAX_PROCESSES=5,PROCESS_DELAY=1000,MAX_DIM=4096;
 
-        // Edit state
-        let editState = {
-            brightness: 100,
-            contrast: 100,
-            saturation: 100,
-            rotation: 0,
-            flipH: false,
-            flipV: false,
-            filter: 'none'
+function createSecureCanvas() {
+    const canvas=document.createElement('canvas');
+    canvas.crossOrigin='anonymous';
+    return canvas;
+}
+
+function checkDoS() {
+    const now=Date.now();
+    if(now-lastProcess<PROCESS_DELAY) {
+        setStatus('⏳ Wait 1 second between processes','error');
+        return false;
+    }
+    if(processCount>=MAX_PROCESSES) {
+        setStatus('⚠️ Rate limit: 5/min max','error');
+        return false;
+    }
+    processCount++;lastProcess=now;
+    setTimeout(()=>processCount--,60000);
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+    // ANTI-COPY PROTECTION (Original)
+    document.addEventListener('contextmenu',e=>{e.preventDefault();showProtect();return false;});
+    document.addEventListener('keydown',e=>{
+        if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='u')||
+           (e.ctrlKey&&e.key==='s')||(e.ctrlKey&&e.key==='a')) {
+            e.preventDefault();showProtect();return false;
+        }
+    },true);
+    
+    // Drag & Drop
+    const uploadZone=document.getElementById('uploadZone');
+    ['dragenter','dragover','dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,ev=>ev.preventDefault()));
+    ['dragenter','dragover'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.add('dragover')));
+    ['dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.remove('dragover')));
+    
+    uploadZone.addEventListener('drop',e=>{
+        const files=e.dataTransfer.files;
+        if(files.length>0) {
+            document.getElementById('fileInput').files=files;
+            showOriginalPreview(files[0]);
+        }
+    });
+    
+    document.getElementById('fileInput').addEventListener('change',e=>{
+        if(e.target.files.length>0) showOriginalPreview(e.target.files[0]);
+    });
+});
+
+function setStatus(msg,type='info') {
+    const el=document.getElementById('status');
+    el.textContent=msg;
+    el.className=`status-${type}`;
+}
+
+function showProtect() {document.getElementById('protectOverlay').style.display='flex';document.body.style.overflow='hidden';}
+function closeProtect() {document.getElementById('protectOverlay').style.display='none';document.body.style.overflow='auto';}
+
+function showOriginalPreview(file) {
+    const preview=document.getElementById('preview');
+    const reader=new FileReader();
+    reader.onload=e=>{
+        preview.innerHTML=`<div class="original-preview">
+            <h3 style="color:#94a3b8;margin-bottom:15px;">📁 Original Image</h3>
+            <canvas id="originalCanvas" class="preview-canvas"></canvas>
+            <div style="margin-top:15px;font-size:1.1em;">
+                📏 <span id="origSize"></span> | 💾 <span id="origFileSize"></span>
+            </div>
+        </div>`;
+        
+        const img=new Image();
+        img.onload=()=>{
+            const canvas=document.getElementById('originalCanvas');
+            const ctx=canvas.getContext('2d');
+            const maxSize=300;
+            let rw=img.width, rh=img.height;
+            if(img.width>maxSize || img.height>maxSize) {
+                const ratio=Math.min(maxSize/img.width, maxSize/img.height);
+                rw*=ratio; rh*=ratio;
+            }
+            canvas.width=rw; canvas.height=rh;
+            ctx.drawImage(img,0,0,rw,rh);
+            
+            document.getElementById('origSize').textContent=`${img.width}×${img.height}`;
+            document.getElementById('origFileSize').textContent=`${Math.round(file.size/1024)}KB`;
+            originalImg=img;
         };
+        img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
 
-        // History for undo/redo
-        let history = [];
-        let historyIndex = -1;
+function addSecureWatermark(ctx,canvas) {
+    ctx.save();
+    ctx.globalAlpha=0.15;
+    ctx.fillStyle='#3b82f6';
+    ctx.font='bold 24px Segoe UI';
+    ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText('RED-EYE.ENTERPRISE',canvas.width/2,30);
+    ctx.fillText('©2026 SECURE',canvas.width/2,canvas.height-20);
+    ctx.restore();
+}
 
-        // Event listeners for sliders
-        document.getElementById('brightness').addEventListener('input', (e) => {
-            editState.brightness = parseInt(e.target.value);
-            document.getElementById('brightnessValue').textContent = e.target.value + '%';
-            updateImage();
-            saveHistory();
-        });
+async function processSecure() {
+    if(!checkDoS()) return;
+    
+    const fileInput=document.getElementById('fileInput');
+    const file=fileInput.files[0];
+    const preview=document.getElementById('preview');
+    const processBtn=document.getElementById('processBtn');
+    const exactSize=document.getElementById('exactSize').checked;
+    
+    if(!file) {setStatus('⚠️ Select image first','error');return;}
+    if(!file.type.startsWith('image/')) {setStatus('⚠️ JPG/PNG/WebP only','error');return;}
+    if(file.size>15*1024*1024) {setStatus('⚠️ Max 15MB','error');return;}
+    
+    processBtn.disabled=true;
+    processBtn.textContent='🔄 SECURE PROCESSING...';
+    setStatus('🔒 Enterprise secure processing...','processing');
+    preview.innerHTML='';
+    
+    const targetW=parseInt(document.getElementById('width').value);
+    const targetH=parseInt(document.getElementById('height').value);
+    const maxKB=parseInt(document.getElementById('maxKB').value)*1024;
+    
+    if(targetW>MAX_DIM || targetH>MAX_DIM) {
+        setStatus('⚠️ Max 4096px per side','error');
+        processBtn.disabled=false;
+        processBtn.textContent='🚀 SECURE PROCESS';
+        return;
+    }
+    
+    try {
+        const img=await loadImageSecure(file);
+        const canvas=optimizeImageAggressive(img,targetW,targetH,exactSize,maxKB);
+        
+        preview.innerHTML=`
+            <div class="result-card">
+                <h3 style="color:#3b82f6;margin-bottom:20px;">✅ ENTERPRISE PROCESSING COMPLETE</h3>
+                <canvas id="resultCanvas" class="result-canvas"></canvas>
+                <div style="text-align:center;margin:25px 0;">
+                    <a id="downloadBtn" class="download-btn" href="#" download="red-eye-enterprise.jpg">💾 DOWNLOAD SECURE IMAGE</a>
+                </div>
+                <div style="background:rgba(255,255,255,0.08);padding:20px;border-radius:16px;font-size:1.1em;text-align:center;">
+                    📏 <strong>${img.naturalWidth}×${img.naturalHeight}</strong> → 
+                    <span style="color:#10b981;">${canvas.width.toFixed(0)}×${canvas.height.toFixed(0)}</span> 
+                    ${exactSize?'<span style="color:#3b82f6;">EXACT</span>':'Proportional'}
+                    <br><strong>💾 ${Math.round(getFileSize(canvas)/1024)}KB</strong>
+                </div>
+            </div>
+        `;
+        
+        const resultCanvas=document.getElementById('resultCanvas');
+        resultCanvas.width=canvas.width; resultCanvas.height=canvas.height;
+        resultCanvas.getContext('2d').drawImage(canvas,0,0);
+        
+        const dataURL=canvas.toDataURL('image/jpeg',0.85);
+        document.getElementById('downloadBtn').href=dataURL;
+        document.getElementById('downloadBtn').download=`RED-EYE_${targetW}x${targetH}_${Math.round(getFileSize(canvas)/1024)}KB.jpg`;
+        
+        setStatus(`✅ Complete: ${canvas.width.toFixed(0)}×${canvas.height.toFixed(0)} | ${Math.round(getFileSize(canvas)/1024)}KB`,'success');
+    } catch(e) {
+        setStatus('❌ Failed: '+e.message,'error');
+        console.error('Processing error:',e);
+    }
+    
+    processBtn.disabled=false;
+    processBtn.textContent='🚀 SECURE PROCESS';
+}
 
-        document.getElementById('contrast').addEventListener('input', (e) => {
-            editState.contrast = parseInt(e.target.value);
-            document.getElementById('contrastValue').textContent = e.target.value + '%';
-            updateImage();
-            saveHistory();
-        });
+function getFileSize(canvas) {
+    return canvas.toDataURL('image/jpeg',0.85).length*0.0009;
+}
 
-        document.getElementById('saturation').addEventListener('input', (e) => {
-            editState.saturation = parseInt(e.target.value);
-            document.getElementById('saturationValue').textContent = e.target.value + '%';
-            updateImage();
-            saveHistory();
-        });
+function loadImageSecure(file) {
+    return new Promise((resolve,reject)=>{
+        const reader=new FileReader();
+        reader.onload=e=>{
+            const img=new Image();
+            img.crossOrigin='anonymous';
+            img.onload=()=>resolve(img);
+            img.onerror=()=>reject(new Error('Image load failed'));
+            img.src=e.target.result;
+        };
+        reader.onerror=()=>reject(new Error('File read error'));
+        reader.readAsDataURL(file);
+    });
+}
 
-        document.getElementById('rotation').addEventListener('input', (e) => {
-            editState.rotation = parseInt(e.target.value);
-            document.getElementById('rotationValue').textContent = e.target.value + '°';
-            updateImage();
-            saveHistory();
-        });
-
-        // File input handler
-        document.getElementById('imageInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        originalImage = img;
-                        currentImage = new Image();
-                        currentImage.src = img.src;
-                        imageLoaded = true;
-                        resetState();
-                        updateImage();
-                        enableControls();
-                        history = [];
-                        historyIndex = -1;
-                        updateHistoryButtons();
-                    };
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Update image on canvas with current edits
-        function updateImage() {
-            if (!imageLoaded) return;
-
-            canvas.width = originalImage.width;
-            canvas.height = originalImage.height;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-
-            // Apply transformations
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.rotate((editState.rotation * Math.PI) / 180);
-            if (editState.flipH) ctx.scale(-1, 1);
-            if (editState.flipV) ctx.scale(1, -1);
-            ctx.translate(-canvas.width / 2, -canvas.height / 2);
-
-            ctx.drawImage(originalImage, 0, 0);
-            ctx.restore();
-
-            // Apply filters
-            applyImageFilters();
-        }
-
-        // Apply filters to the canvas
-        function applyImageFilters() {
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imageData.data;
-
-            for (let i = 0; i < data.length; i += 4) {
-                let r = data[i];
-                let g = data[i + 1];
-                let b = data[i + 2];
-
-                // Apply brightness
-                r = Math.min(255, (r * editState.brightness) / 100);
-                g = Math.min(255, (g * editState.brightness) / 100);
-                b = Math.min(255, (b * editState.brightness) / 100);
-
-                // Apply contrast
-                r = Math.min(255, ((r - 128) * editState.contrast) / 100 + 128);
-                g = Math.min(255, ((g - 128) * editState.contrast) / 100 + 128);
-                b = Math.min(255, ((b - 128) * editState.contrast) / 100 + 128);
-
-                // Apply filter
-                switch (editState.filter) {
-                    case 'grayscale':
-                        const gray = r * 0.299 + g * 0.587 + b * 0.114;
-                        r = g = b = gray;
-                        break;
-                    case 'sepia':
-                        const rSepia = r * 0.393 + g * 0.769 + b * 0.189;
-                        const gSepia = r * 0.349 + g * 0.686 + b * 0.168;
-                        const bSepia = r * 0.272 + g * 0.534 + b * 0.131;
-                        r = Math.min(255, rSepia);
-                        g = Math.min(255, gSepia);
-                        b = Math.min(255, bSepia);
-                        break;
-                    case 'invert':
-                        r = 255 - r;
-                        g = 255 - g;
-                        b = 255 - b;
-                        break;
-                    case 'warm':
-                        r = Math.min(255, r * 1.1);
-                        b = Math.max(0, b * 0.9);
-                        break;
-                    case 'cool':
-                        r = Math.max(0, r * 0.9);
-                        b = Math.min(255, b * 1.1);
-                        break;
-                }
-
-                // Apply saturation
-                const max = Math.max(r, g, b);
-                const min = Math.min(r, g, b);
-                const lightness = (max + min) / 2;
-                const satFactor = editState.saturation / 100;
-
-                if (max !== min) {
-                    const l = lightness / 255;
-                    const s = l < 0.5 ? (max - min) / (max + min) : (max - min) / (510 - max - min);
-
-                    const sr = (r - lightness) * satFactor + lightness;
-                    const sg = (g - lightness) * satFactor + lightness;
-                    const sb = (b - lightness) * satFactor + lightness;
-
-                    r = Math.min(255, Math.max(0, sr));
-                    g = Math.min(255, Math.max(0, sg));
-                    b = Math.min(255, Math.max(0, sb));
-                }
-
-                data[i] = r;
-                data[i + 1] = g;
-                data[i + 2] = b;
-            }
-
-            ctx.putImageData(imageData, 0, 0);
-        }
-
-        // Rotate image
-        function rotateImage(degrees) {
-            editState.rotation = (editState.rotation + degrees) % 360;
-            document.getElementById('rotation').value = editState.rotation;
-            document.getElementById('rotationValue').textContent = editState.rotation + '°';
-            updateImage();
-            saveHistory();
-        }
-
-        // Flip image
-        function flipImage(direction) {
-            if (direction === 'horizontal') editState.flipH = !editState.flipH;
-            if (direction === 'vertical') editState.flipV = !editState.flipV;
-            updateImage();
-            saveHistory();
-        }
-
-        // Apply filter
-        function applyFilter(filter) {
-            editState.filter = filter;
-            updateImage();
-            saveHistory();
-        }
-
-        // Reset to original state
-        function resetImage() {
-            resetState();
-            updateImage();
-            history = [];
-            historyIndex = -1;
-            updateHistoryButtons();
-        }
-
-        // Reset state to defaults
-        function resetState() {
-            editState = {
-                brightness: 100,
-                contrast: 100,
-                saturation: 100,
-                rotation: 0,
-                flipH: false,
-                flipV: false,
-                filter: 'none'
-            };
-            document.getElementById('brightness').value = 100;
-            document.getElementById('contrast').value = 100;
-            document.getElementById('saturation').value = 100;
-            document.getElementById('rotation').value = 0;
-            document.getElementById('filterSelect').value = 'none';
-            document.getElementById('brightnessValue').textContent = '100%';
-            document.getElementById('contrastValue').textContent = '100%';
-            document.getElementById('saturationValue').textContent = '100%';
-            document.getElementById('rotationValue').textContent = '0°';
-        }
-
-        // Save history for undo/redo
-        function saveHistory() {
-            historyIndex++;
-            history = history.slice(0, historyIndex);
-            history.push(JSON.parse(JSON.stringify(editState)));
-            updateHistoryButtons();
-            updateHistoryInfo();
-        }
-
-        // Undo edit
-        function undoEdit() {
-            if (historyIndex > 0) {
-                historyIndex--;
-                restoreState(history[historyIndex]);
-                updateHistoryButtons();
-                updateHistoryInfo();
-            }
-        }
-
-        // Redo edit
-        function redoEdit() {
-            if (historyIndex < history.length - 1) {
-                historyIndex++;
-                restoreState(history[historyIndex]);
-                updateHistoryButtons();
-                updateHistoryInfo();
-            }
-        }
-
-        // Restore state from history
-        function restoreState(state) {
-            editState = JSON.parse(JSON.stringify(state));
-            document.getElementById('brightness').value = editState.brightness;
-            document.getElementById('contrast').value = editState.contrast;
-            document.getElementById('saturation').value = editState.saturation;
-            document.getElementById('rotation').value = editState.rotation;
-            document.getElementById('filterSelect').value = editState.filter;
-            document.getElementById('brightnessValue').textContent = editState.brightness + '%';
-            document.getElementById('contrastValue').textContent = editState.contrast + '%';
-            document.getElementById('saturationValue').textContent = editState.saturation + '%';
-            document.getElementById('rotationValue').textContent = editState.rotation + '°';
-            updateImage();
-        }
-
-        // Update undo/redo button states
-        function updateHistoryButtons() {
-            document.getElementById('undoBtn').disabled = historyIndex <= 0;
-            document.getElementById('redoBtn').disabled = historyIndex >= history.length - 1;
-        }
-
-        // Update history info display
-        function updateHistoryInfo() {
-            const total = history.length;
-            const current = historyIndex + 1;
-            document.getElementById('historyInfo').textContent = `Step ${current} of ${total}`;
-        }
-
-        // Download image
-        function downloadImage() {
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = 'red-eye-edited-' + Date.now() + '.png';
-            link.click();
-        }
-
-        // Enable/disable controls
-        function enableControls() {
-            const controls = document.querySelectorAll('input, select, button');
-            controls.forEach(control => {
-                if (control.id !== 'imageInput' && control.id !== 'filterSelect') {
-                    control.disabled = false;
-                }
-            });
-            document.getElementById('resetBtn').disabled = false;
-            document.getElementById('downloadBtn').disabled = false;
-            document.getElementById('filterSelect').disabled = false;
-        }
-    </script>
+function optimizeImageAggressive(img,targetW,targetH,exactSize,maxKB) {
+    const canvas=createSecureCanvas();
+    const ctx=canvas.getContext('2d');
+    
+    if(exactSize) {
+        canvas.width=targetW;
+        canvas.height=targetH;
+    } else {
+        const ratio=Math.min(targetW/img.naturalWidth,targetH/img.naturalHeight);
+        canvas.width=Math.floor(img.naturalWidth*ratio);
+        canvas.height=Math.floor(img.naturalHeight*ratio);
+    }
+    
+    ctx.imageSmoothingQuality='high';
+    ctx.imageSmoothingEnabled=true;
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    
+    addSecureWatermark(ctx,canvas);
+    
+    let quality=0.92;
+    while(getFileSize(canvas)>maxKB && quality>0.05) {
+        quality-=0.02;
+    }
+    
+    return canvas;
+}
+</script>
 </body>
 </html>
