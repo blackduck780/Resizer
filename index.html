@@ -1,4 +1,134 @@
 <!DOCTYPE html>
+<div class="image-enhancer-tool" style="font-family:Arial,sans-serif;max-width:800px;margin:20px auto;padding:20px;border:1px solid #ccc;">
+    <h3 style="margin-top:0;">🖼️ Image Enhancer</h3>
+    <p style="font-size:14px;margin-bottom:15px;">Upload blurry image → Adjust → Download sharp version</p>
+    
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:250px;">
+            <input type="file" id="enhanceFile" accept="image/*" style="margin-bottom:10px;width:100%;padding:8px;">
+            <label>Sharpen: <input type="range" id="enhanceSharpen" min="0" max="300" value="100" style="width:80%;">
+                <span id="sharpenVal">100</span>%</label><br><br>
+            <label>Contrast: <input type="range" id="enhanceContrast" min="50" max="200" value="100" style="width:80%;">
+                <span id="contrastVal">100</span>%</label><br><br>
+            <label>Brightness: <input type="range" id="enhanceBright" min="50" max="200" value="100" style="width:80%;">
+                <span id="brightVal">100</span>%</label><br><br>
+            <button id="enhanceBtn" disabled style="background:#007bff;color:white;border:none;padding:10px 20px;cursor:pointer;">Enhance</button>
+            <button id="enhanceDownload" disabled style="background:#28a745;color:white;border:none;padding:10px 20px;cursor:pointer;margin-left:5px;">💾 Download</button>
+        </div>
+        <div style="flex:1;">
+            <div style="text-align:center;">
+                <canvas id="enhancedCanvas" width="400" height="300" style="border:1px solid #ddd;max-height:300px;"></canvas>
+                <div id="enhanceStatus" style="margin-top:10px;font-size:12px;color:#666;">Upload image to start</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(() => {
+    // Image enhancer script (self-contained)
+    const fileInput = document.getElementById('enhanceFile');
+    const sharpenSlider = document.getElementById('enhanceSharpen');
+    const contrastSlider = document.getElementById('enhanceContrast');
+    const brightnessSlider = document.getElementById('enhanceBright');
+    const enhanceBtn = document.getElementById('enhanceBtn');
+    const downloadBtn = document.getElementById('enhanceDownload');
+    const canvas = document.getElementById('enhancedCanvas');
+    const ctx = canvas.getContext('2d');
+    const status = document.getElementById('enhanceStatus');
+    
+    let originalImageData = null;
+    
+    // Update value displays
+    sharpenSlider.oninput = () => document.getElementById('sharpenVal').textContent = sharpenSlider.value;
+    contrastSlider.oninput = () => document.getElementById('contrastVal').textContent = contrastSlider.value;
+    brightnessSlider.oninput = () => document.getElementById('brightVal').textContent = brightnessSlider.value;
+    
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    canvas.width = Math.min(512, img.width);
+                    canvas.height = (img.height * canvas.width) / img.width;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    enhanceBtn.disabled = false;
+                    status.textContent = 'Ready to enhance!';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    function applySharpen(imageData, amount = 1) {
+        const data = imageData.data;
+        const sharpenKernel = [0, -1*amount, 0, -1*amount, 5*amount+1, -1*amount, 0, -1*amount, 0];
+        const side = 3, halfSide = 1;
+        const tempData = ctx.createImageData(canvas.width, canvas.height);
+        const temp = tempData.data;
+        
+        for (let y = 0; y < imageData.height; y++) {
+            for (let x = 0; x < imageData.width; x++) {
+                let r = 0, g = 0, b = 0;
+                for (let cy = 0; cy < side; cy++) {
+                    for (let cx = 0; cx < side; cx++) {
+                        const scy = Math.max(0, Math.min(imageData.height - 1, y + cy - halfSide));
+                        const scx = Math.max(0, Math.min(imageData.width - 1, x + cx - halfSide));
+                        const srcOffset = (scy * imageData.width + scx) * 4;
+                        const wt = sharpenKernel[cy * side + cx];
+                        r += data[srcOffset] * wt;
+                        g += data[srcOffset + 1] * wt;
+                        b += data[srcOffset + 2] * wt;
+                    }
+                }
+                const dstOffset = (y * imageData.width + x) * 4;
+                temp[dstOffset] = Math.min(255, Math.max(0, r));
+                temp[dstOffset + 1] = Math.min(255, Math.max(0, g));
+                temp[dstOffset + 2] = Math.min(255, Math.max(0, b));
+                temp[dstOffset + 3] = 255;
+            }
+        }
+        ctx.putImageData(tempData, 0, 0);
+    }
+    
+    function adjustContrastBrightness(imageData, contrast, brightness) {
+        const data = imageData.data;
+        contrast = (contrast / 100) - 1;
+        brightness = (brightness / 100) - 1;
+        
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i], g = data[i+1], b = data[i+2];
+            data[i] = Math.min(255, Math.max(0, ((r / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
+            data[i+1] = Math.min(255, Math.max(0, ((g / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
+            data[i+2] = Math.min(255, Math.max(0, ((b / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
+        }
+        ctx.putImageData(imageData, 0, 0);
+    }
+    
+    enhanceBtn.onclick = () => {
+        if (originalImageData) {
+            ctx.putImageData(originalImageData, 0, 0);
+            applySharpen(originalImageData, parseFloat(sharpenSlider.value) / 100);
+            const enhancedData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            adjustContrastBrightness(enhancedData, parseFloat(contrastSlider.value), parseFloat(brightnessSlider.value));
+            downloadBtn.disabled = false;
+            status.textContent = 'Enhanced! Ready to download.';
+        }
+    };
+    
+    downloadBtn.onclick = () => {
+        const link = document.createElement('a');
+        link.download = 'enhanced-image.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        status.textContent = 'Downloaded!';
+    };
+})();
+</script>
 <html>
 <head>
 <title>🔒 RED-EYE Enterprise Secure Resizer v4.0</title>
@@ -360,135 +490,7 @@ function optimizeImageAggressive(img,targetW,targetH,exactSize,maxKB) {
     const canvas=createSecureCanvas();
     const ctx=canvas.getContext('2d');
 
-    // FILTER Tool
-    <div class="image-enhancer-tool" style="font-family:Arial,sans-serif;max-width:800px;margin:20px auto;padding:20px;border:1px solid #ccc;">
-    <h3 style="margin-top:0;">🖼️ Image Enhancer</h3>
-    <p style="font-size:14px;margin-bottom:15px;">Upload blurry image → Adjust → Download sharp version</p>
-    
-    <div style="display:flex;gap:20px;flex-wrap:wrap;">
-        <div style="flex:1;min-width:250px;">
-            <input type="file" id="enhanceFile" accept="image/*" style="margin-bottom:10px;width:100%;padding:8px;">
-            <label>Sharpen: <input type="range" id="enhanceSharpen" min="0" max="300" value="100" style="width:80%;">
-                <span id="sharpenVal">100</span>%</label><br><br>
-            <label>Contrast: <input type="range" id="enhanceContrast" min="50" max="200" value="100" style="width:80%;">
-                <span id="contrastVal">100</span>%</label><br><br>
-            <label>Brightness: <input type="range" id="enhanceBright" min="50" max="200" value="100" style="width:80%;">
-                <span id="brightVal">100</span>%</label><br><br>
-            <button id="enhanceBtn" disabled style="background:#007bff;color:white;border:none;padding:10px 20px;cursor:pointer;">Enhance</button>
-            <button id="enhanceDownload" disabled style="background:#28a745;color:white;border:none;padding:10px 20px;cursor:pointer;margin-left:5px;">💾 Download</button>
-        </div>
-        <div style="flex:1;">
-            <div style="text-align:center;">
-                <canvas id="enhancedCanvas" width="400" height="300" style="border:1px solid #ddd;max-height:300px;"></canvas>
-                <div id="enhanceStatus" style="margin-top:10px;font-size:12px;color:#666;">Upload image to start</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-(() => {
-    // Image enhancer script (self-contained)
-    const fileInput = document.getElementById('enhanceFile');
-    const sharpenSlider = document.getElementById('enhanceSharpen');
-    const contrastSlider = document.getElementById('enhanceContrast');
-    const brightnessSlider = document.getElementById('enhanceBright');
-    const enhanceBtn = document.getElementById('enhanceBtn');
-    const downloadBtn = document.getElementById('enhanceDownload');
-    const canvas = document.getElementById('enhancedCanvas');
-    const ctx = canvas.getContext('2d');
-    const status = document.getElementById('enhanceStatus');
-    
-    let originalImageData = null;
-    
-    // Update value displays
-    sharpenSlider.oninput = () => document.getElementById('sharpenVal').textContent = sharpenSlider.value;
-    contrastSlider.oninput = () => document.getElementById('contrastVal').textContent = contrastSlider.value;
-    brightnessSlider.oninput = () => document.getElementById('brightVal').textContent = brightnessSlider.value;
-    
-    fileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    canvas.width = Math.min(512, img.width);
-                    canvas.height = (img.height * canvas.width) / img.width;
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    enhanceBtn.disabled = false;
-                    status.textContent = 'Ready to enhance!';
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    
-    function applySharpen(imageData, amount = 1) {
-        const data = imageData.data;
-        const sharpenKernel = [0, -1*amount, 0, -1*amount, 5*amount+1, -1*amount, 0, -1*amount, 0];
-        const side = 3, halfSide = 1;
-        const tempData = ctx.createImageData(canvas.width, canvas.height);
-        const temp = tempData.data;
-        
-        for (let y = 0; y < imageData.height; y++) {
-            for (let x = 0; x < imageData.width; x++) {
-                let r = 0, g = 0, b = 0;
-                for (let cy = 0; cy < side; cy++) {
-                    for (let cx = 0; cx < side; cx++) {
-                        const scy = Math.max(0, Math.min(imageData.height - 1, y + cy - halfSide));
-                        const scx = Math.max(0, Math.min(imageData.width - 1, x + cx - halfSide));
-                        const srcOffset = (scy * imageData.width + scx) * 4;
-                        const wt = sharpenKernel[cy * side + cx];
-                        r += data[srcOffset] * wt;
-                        g += data[srcOffset + 1] * wt;
-                        b += data[srcOffset + 2] * wt;
-                    }
-                }
-                const dstOffset = (y * imageData.width + x) * 4;
-                temp[dstOffset] = Math.min(255, Math.max(0, r));
-                temp[dstOffset + 1] = Math.min(255, Math.max(0, g));
-                temp[dstOffset + 2] = Math.min(255, Math.max(0, b));
-                temp[dstOffset + 3] = 255;
-            }
-        }
-        ctx.putImageData(tempData, 0, 0);
-    }
-    
-    function adjustContrastBrightness(imageData, contrast, brightness) {
-        const data = imageData.data;
-        contrast = (contrast / 100) - 1;
-        brightness = (brightness / 100) - 1;
-        
-        for (let i = 0; i < data.length; i += 4) {
-            const r = data[i], g = data[i+1], b = data[i+2];
-            data[i] = Math.min(255, Math.max(0, ((r / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
-            data[i+1] = Math.min(255, Math.max(0, ((g / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
-            data[i+2] = Math.min(255, Math.max(0, ((b / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
-        }
-        ctx.putImageData(imageData, 0, 0);
-    }
-    
-    enhanceBtn.onclick = () => {
-        if (originalImageData) {
-            ctx.putImageData(originalImageData, 0, 0);
-            applySharpen(originalImageData, parseFloat(sharpenSlider.value) / 100);
-            const enhancedData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            adjustContrastBrightness(enhancedData, parseFloat(contrastSlider.value), parseFloat(brightnessSlider.value));
-            downloadBtn.disabled = false;
-            status.textContent = 'Enhanced! Ready to download.';
-        }
-    };
-    
-    downloadBtn.onclick = () => {
-        const link = document.createElement('a');
-        link.download = 'enhanced-image.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        status.textContent = 'Downloaded!';
-    };
  BEST SIZING LOGIC (from script 1 - more precise)
     if(exactSize) {
         canvas.width=targetW;
