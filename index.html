@@ -1,144 +1,9 @@
-<!DOCTYPE html>
-<div class="image-enhancer-tool" style="font-family:Arial,sans-serif;max-width:800px;margin:20px auto;padding:20px;border:1px solid #ccc;">
-    <h3 style="margin-top:0;">🖼️ Image Enhancer</h3>
-    <p style="font-size:14px;margin-bottom:15px;">Upload blurry image → Adjust → Download sharp version</p>
-    
-    <div style="display:flex;gap:20px;flex-wrap:wrap;">
-        <div style="flex:1;min-width:250px;">
-            <input type="file" id="enhanceFile" accept="image/*" style="margin-bottom:10px;width:100%;padding:8px;">
-            <label>Sharpen: <input type="range" id="enhanceSharpen" min="0" max="300" value="100" style="width:80%;">
-                <span id="sharpenVal">100</span>%</label><br><br>
-            <label>Contrast: <input type="range" id="enhanceContrast" min="50" max="200" value="100" style="width:80%;">
-                <span id="contrastVal">100</span>%</label><br><br>
-            <label>Brightness: <input type="range" id="enhanceBright" min="50" max="200" value="100" style="width:80%;">
-                <span id="brightVal">100</span>%</label><br><br>
-            <button id="enhanceBtn" disabled style="background:#007bff;color:white;border:none;padding:10px 20px;cursor:pointer;">Enhance</button>
-            <button id="enhanceDownload" disabled style="background:#28a745;color:white;border:none;padding:10px 20px;cursor:pointer;margin-left:5px;">💾 Download</button>
-        </div>
-        <div style="flex:1;">
-            <div style="text-align:center;">
-                <canvas id="enhancedCanvas" width="400" height="300" style="border:1px solid #ddd;max-height:300px;"></canvas>
-                <div id="enhanceStatus" style="margin-top:10px;font-size:12px;color:#666;">Upload image to start</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-(() => {
-    // Image enhancer script (self-contained)
-    const fileInput = document.getElementById('enhanceFile');
-    const sharpenSlider = document.getElementById('enhanceSharpen');
-    const contrastSlider = document.getElementById('enhanceContrast');
-    const brightnessSlider = document.getElementById('enhanceBright');
-    const enhanceBtn = document.getElementById('enhanceBtn');
-    const downloadBtn = document.getElementById('enhanceDownload');
-    const canvas = document.getElementById('enhancedCanvas');
-    const ctx = canvas.getContext('2d');
-    const status = document.getElementById('enhanceStatus');
-    
-    let originalImageData = null;
-    
-    // Update value displays
-    sharpenSlider.oninput = () => document.getElementById('sharpenVal').textContent = sharpenSlider.value;
-    contrastSlider.oninput = () => document.getElementById('contrastVal').textContent = contrastSlider.value;
-    brightnessSlider.oninput = () => document.getElementById('brightVal').textContent = brightnessSlider.value;
-    
-    fileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    canvas.width = Math.min(512, img.width);
-                    canvas.height = (img.height * canvas.width) / img.width;
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    enhanceBtn.disabled = false;
-                    status.textContent = 'Ready to enhance!';
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    
-    function applySharpen(imageData, amount = 1) {
-        const data = imageData.data;
-        const sharpenKernel = [0, -1*amount, 0, -1*amount, 5*amount+1, -1*amount, 0, -1*amount, 0];
-        const side = 3, halfSide = 1;
-        const tempData = ctx.createImageData(canvas.width, canvas.height);
-        const temp = tempData.data;
-        
-        for (let y = 0; y < imageData.height; y++) {
-            for (let x = 0; x < imageData.width; x++) {
-                let r = 0, g = 0, b = 0;
-                for (let cy = 0; cy < side; cy++) {
-                    for (let cx = 0; cx < side; cx++) {
-                        const scy = Math.max(0, Math.min(imageData.height - 1, y + cy - halfSide));
-                        const scx = Math.max(0, Math.min(imageData.width - 1, x + cx - halfSide));
-                        const srcOffset = (scy * imageData.width + scx) * 4;
-                        const wt = sharpenKernel[cy * side + cx];
-                        r += data[srcOffset] * wt;
-                        g += data[srcOffset + 1] * wt;
-                        b += data[srcOffset + 2] * wt;
-                    }
-                }
-                const dstOffset = (y * imageData.width + x) * 4;
-                temp[dstOffset] = Math.min(255, Math.max(0, r));
-                temp[dstOffset + 1] = Math.min(255, Math.max(0, g));
-                temp[dstOffset + 2] = Math.min(255, Math.max(0, b));
-                temp[dstOffset + 3] = 255;
-            }
-        }
-        ctx.putImageData(tempData, 0, 0);
-    }
-    
-    function adjustContrastBrightness(imageData, contrast, brightness) {
-        const data = imageData.data;
-        contrast = (contrast / 100) - 1;
-        brightness = (brightness / 100) - 1;
-        
-        for (let i = 0; i < data.length; i += 4) {
-            const r = data[i], g = data[i+1], b = data[i+2];
-            data[i] = Math.min(255, Math.max(0, ((r / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
-            data[i+1] = Math.min(255, Math.max(0, ((g / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
-            data[i+2] = Math.min(255, Math.max(0, ((b / 255 - 0.5) * contrast + 0.5) * 255 + brightness * 255));
-        }
-        ctx.putImageData(imageData, 0, 0);
-    }
-    
-    enhanceBtn.onclick = () => {
-        if (originalImageData) {
-            ctx.putImageData(originalImageData, 0, 0);
-            applySharpen(originalImageData, parseFloat(sharpenSlider.value) / 100);
-            const enhancedData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            adjustContrastBrightness(enhancedData, parseFloat(contrastSlider.value), parseFloat(brightnessSlider.value));
-            downloadBtn.disabled = false;
-            status.textContent = 'Enhanced! Ready to download.';
-        }
-    };
-    
-    downloadBtn.onclick = () => {
-        const link = document.createElement('a');
-        link.download = 'enhanced-image.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        status.textContent = 'Downloaded!';
-    };
-})();
-</script>
+<!DOCTYPE html>
 <html>
 <head>
-<title>🔒 RED-EYE Enterprise Secure Resizer v4.0</title>
+<title>🔒 RED-EYE Enterprise Secure Resizer + Enhancer v4.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- COPYRIGHT PROTECTION -->
-<!--
-🔒 RED-EYE ENTERPRISE v4.0 © 2026 [YOUR_USERNAME] 
-Apache License 2.0 - Commercial Use Prohibited
-DMCA protected - https://github.com/YOUR_USERNAME/YOUR_REPO
--->
 <style>
 * {margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-moz-user-select:none;}
 body {
@@ -149,7 +14,7 @@ body {
     padding:20px;
 }
 .container {
-    max-width:1200px;margin:0 auto;background:rgba(12,12,26,0.95);
+    max-width:1400px;margin:0 auto;background:rgba(12,12,26,0.95);
     backdrop-filter:blur(20px);border-radius:24px;padding:40px;
     box-shadow:0 25px 50px rgba(0,0,0,0.5);border:1px solid rgba(59,130,246,0.3);
     position:relative;
@@ -166,20 +31,17 @@ body {
     text-align:center;font-weight:800;margin-bottom:15px;text-shadow:0 0 30px rgba(59,130,246,0.5);
 }
 .tagline {text-align:center;color:#94a3b8;font-size:1.2em;margin-bottom:40px;font-weight:500;}
-.upload-zone {
+.upload-zone, .enhancer-section {
     border:3px dashed rgba(59,130,246,0.6);border-radius:20px;padding:50px 30px;
     text-align:center;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);margin-bottom:35px;
     background:rgba(59,130,246,0.08);position:relative;overflow:hidden;
 }
-.upload-zone::before {
-    content:'🔒 SECURE PROCESSING';position:absolute;top:-50px;right:-50px;
-    background:linear-gradient(45deg,#3b82f6,#1d4ed8);color:white;padding:10px 25px;
-    font-size:0.8em;font-weight:700;border-radius:20px;transform:rotate(45deg);
-}
-.upload-zone:hover {border-color:#3b82f6;background:rgba(59,130,246,0.15);transform:translateY(-8px);box-shadow:0 20px 40px rgba(59,130,246,0.2);}
+.upload-zone::before {content:'🔒 SECURE RESIZE';position:absolute;top:-50px;right:-50px;background:linear-gradient(45deg,#3b82f6,#1d4ed8);color:white;padding:10px 25px;font-size:0.8em;font-weight:700;border-radius:20px;transform:rotate(45deg);}
+.enhancer-section::before {content:'✨ IMAGE ENHANCER';position:absolute;top:-50px;left:-50px;background:linear-gradient(45deg,#10b981,#059669);color:white;padding:10px 25px;font-size:0.8em;font-weight:700;border-radius:20px;transform:rotate(-45deg);}
+.upload-zone:hover, .enhancer-section:hover {border-color:#3b82f6;background:rgba(59,130,246,0.15);transform:translateY(-8px);box-shadow:0 20px 40px rgba(59,130,246,0.2);}
 .upload-zone.dragover {border-color:#10b981;background:rgba(16,185,129,0.2);transform:scale(1.02);}
-#fileInput{display:none;}
-.upload-btn {
+#fileInput, #enhanceFile {display:none;}
+.upload-btn, .enhance-btn {
     background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;padding:18px 45px;
     border-radius:50px;cursor:pointer;font-weight:700;font-size:1.2em;display:inline-block;
     box-shadow:0 15px 35px rgba(59,130,246,0.4);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);border:none;
@@ -224,13 +86,14 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
 .status-processing {background:rgba(245,158,11,0.2) !important;border-color:rgba(245,158,11,0.5) !important;}
 .status-success {background:rgba(16,185,129,0.2) !important;border-color:rgba(16,185,129,0.5) !important;}
 .status-error {background:rgba(239,68,68,0.2) !important;border-color:rgba(239,68,68,0.5) !important;}
-.original-preview, .result-card {
+.original-preview, .result-card, .enhancer-preview {
     background:rgba(255,255,255,0.06);border-radius:20px;padding:30px;border:1px solid rgba(255,255,255,0.1);
     margin-top:30px;transform:translateY(20px);opacity:0;animation:slideUp 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
 }
 @keyframes slideUp {to {transform:translateY(0);opacity:1;}}
 .preview-canvas {max-width:100%;max-height:300px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.3);border:2px solid rgba(59,130,246,0.4);}
 .result-canvas {max-width:100%;border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,0.4);border:3px solid rgba(59,130,246,0.6);}
+.enhanced-canvas {max-width:100%;max-height:400px;border-radius:16px;box-shadow:0 20px 40px rgba(16,185,129,0.4);border:3px solid rgba(16,185,129,0.6);}
 .download-btn {
     display:inline-block;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;padding:18px 40px;
     border-radius:50px;text-decoration:none;font-weight:700;font-size:1.1em;margin:20px 10px 0;box-shadow:0 15px 35px rgba(59,130,246,0.4);
@@ -245,14 +108,23 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
     background:linear-gradient(135deg,#1a1a2e,#16213e);border:3px solid #3b82f6;border-radius:24px;
     padding:40px;text-align:center;max-width:500px;box-shadow:0 30px 60px rgba(59,130,246,0.4);color:white;
 }
-@media (max-width:768px) {.dimension-controls {grid-template-columns:1fr 1fr !important;}.container {padding:20px;margin:10px;}}
+.image-enhancer-tool {
+    display:flex;gap:30px;flex-wrap:wrap;margin-top:40px;padding:30px;background:rgba(16,185,129,0.1);border-radius:20px;border:2px solid rgba(16,185,129,0.3);
+}
+.enhancer-controls {flex:1;min-width:300px;}
+.enhancer-preview {flex:1;text-align:center;}
+.enhancer-controls label {display:block;margin:15px 0 5px;font-weight:600;color:#94a3b8;}
+.enhancer-controls input[type="range"] {width:100%;height:8px;background:rgba(255,255,255,0.2);border-radius:5px;}
+.enhancer-controls input[type="range"]:hover {background:rgba(255,255,255,0.4);}
+@media (max-width:768px) {.dimension-controls {grid-template-columns:1fr 1fr !important;}.container {padding:20px;margin:10px;}.image-enhancer-tool {flex-direction:column;}}
 </style>
 </head>
 <body>
 <div class="container" style="position:relative;">
-    <div class="logo">🔒 RED-EYE v4.0</div>
-    <div class="tagline">Enterprise Secure Resizer • Original Preview • Exact Dimensions • Advanced Compression • DoS Protected</div>
+    <div class="logo">🔒 RED-EYE v4.0 + ENHANCER</div>
+    <div class="tagline">Enterprise Secure Resizer • Image Enhancement • Original Preview • Exact Dimensions • Advanced Processing</div>
     
+    <!-- RESIZER SECTION -->
     <div class="upload-zone" id="uploadZone">
         <div style="font-size:4em;margin-bottom:20px;">🖼️</div>
         <div style="font-size:1.4em;margin-bottom:25px;">Drag & drop your image for secure processing</div>
@@ -262,9 +134,9 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
     </div>
     
     <div class="dimension-controls">
-        <div><div class="dimension-label">Width</div><input type="number" id="width" value="600" min="1" max="4096"></div>
-        <div><div class="dimension-label">Height</div><input type="number" id="height" value="200" min="1" max="4096"></div>
-        <div><div class="dimension-label">Max KB</div><input type="number" id="maxKB" value="50" min="1" max="5000"></div>
+        <div><div class="dimension-label">Width</div><input type="number" id="width" value="600" min="1" max="4096" class="dimension-input"></div>
+        <div><div class="dimension-label">Height</div><input type="number" id="height" value="200" min="1" max="4096" class="dimension-input"></div>
+        <div><div class="dimension-label">Max KB</div><input type="number" id="maxKB" value="50" min="1" max="5000" class="dimension-input"></div>
         <div class="toggle-container">
             <div class="toggle-group">
                 <label class="toggle-switch">
@@ -279,6 +151,32 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
     <button class="process-btn" onclick="processSecure()" id="processBtn">🚀 SECURE PROCESS</button>
     <div id="status">🔒 Ready - Enterprise secure processing v4.0</div>
     <div id="preview"></div>
+
+    <!-- ENHANCER SECTION -->
+    <div class="enhancer-section">
+        <label for="enhanceFile" class="enhance-btn">✨ ENHANCE IMAGE</label>
+        <input type="file" id="enhanceFile" accept="image/*">
+    </div>
+
+    <div class="image-enhancer-tool" id="enhancerTool" style="display:none;">
+        <div class="enhancer-controls">
+            <label>Sharpen: <span id="sharpenVal">100</span>%</label>
+            <input type="range" id="enhanceSharpen" min="0" max="300" value="100">
+            <label>Contrast: <span id="contrastVal">100</span>%</label>
+            <input type="range" id="enhanceContrast" min="50" max="200" value="100">
+            <label>Brightness: <span id="brightVal">100</span>%</label>
+            <input type="range" id="enhanceBright" min="50" max="200" value="100">
+            <br><br>
+            <button id="enhanceBtn" disabled class="process-btn" style="width:auto;padding:15px 30px;">✨ ENHANCE</button>
+            <button id="enhanceDownload" disabled class="download-btn" style="background:linear-gradient(135deg,#10b981,#059669);">💾 Download</button>
+        </div>
+        <div class="enhancer-preview">
+            <div style="text-align:center;">
+                <canvas id="enhancedCanvas" width="400" height="300" class="enhanced-canvas" style="display:none;"></canvas>
+                <div id="enhanceStatus" style="margin-top:10px;font-size:1.1em;color:#94a3b8;">Upload image to enhance</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- ANTI-COPY PROTECTION MODAL -->
@@ -286,16 +184,17 @@ input:checked + .slider:before {transform:translateX(30px);background:linear-gra
     <div class="protect-modal">
         <div style="font-size:3em;margin-bottom:20px;">🚫</div>
         <h2 style="color:#3b82f6;margin-bottom:15px;">ENTERPRISE PROTECTION v4.0</h2>
-        <p>🔒 RED-EYE © 2026 [YOUR_USERNAME]<br>Right-click & DevTools blocked<br>Watermark embedded in all images<br>DoS protection active</p>
+        <p>🔒 RED-EYE © 2026<br>Right-click & DevTools blocked<br>Watermark embedded in all images<br>DoS protection active</p>
         <button onclick="closeProtect()" style="background:#3b82f6;color:white;border:none;padding:15px 35px;border-radius:25px;font-weight:700;margin-top:20px;cursor:pointer;">Continue</button>
     </div>
 </div>
 
 <script>
-// 🔥 RED-EYE ENTERPRISE v4.0 - BEST OF BOTH SCRIPTS + ENHANCEMENTS
+// 🔥 RED-EYE ENTERPRISE v4.0 + IMAGE ENHANCER - FULLY COMBINED
 let processCount=0,lastProcess=0,originalImg=null;
 const MAX_PROCESSES=5,PROCESS_DELAY=1000,MAX_DIM=4096;
 
+// RED-EYE RESIZER FUNCTIONS (unchanged)
 function createSecureCanvas() {
     const canvas=document.createElement('canvas');
     canvas.crossOrigin='anonymous';
@@ -316,35 +215,6 @@ function checkDoS() {
     setTimeout(()=>processCount--,60000);
     return true;
 }
-
-document.addEventListener('DOMContentLoaded',()=>{
-    // ENTERPRISE ANTI-COPY PROTECTION (Enhanced)
-    document.addEventListener('contextmenu',e=>{e.preventDefault();showProtect();return false;});
-    document.addEventListener('keydown',e=>{
-        if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='u')||
-           (e.ctrlKey&&e.key==='s')||(e.ctrlKey&&e.key==='a')) {
-            e.preventDefault();showProtect();return false;
-        }
-    },true);
-    
-    // Drag & Drop (Enhanced from both scripts)
-    const uploadZone=document.getElementById('uploadZone');
-    ['dragenter','dragover','dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,ev=>ev.preventDefault()));
-    ['dragenter','dragover'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.add('dragover')));
-    ['dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.remove('dragover')));
-    
-    uploadZone.addEventListener('drop',e=>{
-        const files=e.dataTransfer.files;
-        if(files.length>0) {
-            document.getElementById('fileInput').files=files;
-            showOriginalPreview(files[0]);
-        }
-    });
-    
-    document.getElementById('fileInput').addEventListener('change',e=>{
-        if(e.target.files.length>0) showOriginalPreview(e.target.files[0]);
-    });
-});
 
 function setStatus(msg,type='info') {
     const el=document.getElementById('status');
@@ -410,6 +280,8 @@ async function processSecure() {
     const exactSize=document.getElementById('exactSize').checked;
     
     if(!file) {setStatus('⚠️ Select image first','error');return;}
+    if(!file.type.startsWith('image/')) {setStatus('⚠️ JPG/PNG/WebP only','error');return;}
+    if(file.size>15*1024*1024) {setStatus('⚠️ Select image first','error');return;}
     if(!file.type.startsWith('image/')) {setStatus('⚠️ JPG/PNG/WebP only','error');return;}
     if(file.size>15*1024*1024) {setStatus('⚠️ Max 15MB','error');return;}
     
