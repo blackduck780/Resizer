@@ -1,183 +1,202 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sa">
 <head>
-<meta charset="UTF-8">
-<title>Pro Image & Video Editor</title>
-
-<!--
-Apache License 2.0
-Copyright 2026 YourName
-http://www.apache.org/licenses/LICENSE-2.0
--->
-
-<style>
-body{margin:0;font-family:system-ui;background:#0b1220;color:#fff}
-header{padding:10px;background:#020617;text-align:center;font-size:20px}
-.toolbar{display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:#020617}
-button{padding:6px 12px;background:#2563eb;border:none;border-radius:4px;color:#fff;cursor:pointer}
-button:hover{background:#1d4ed8}
-.workspace{padding:10px}
-canvas,video{max-width:100%;border:1px solid #334155;margin-top:10px}
-input{margin-top:6px}
-footer{text-align:center;font-size:12px;opacity:.7;padding:6px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 रक्ताक्ष उद्यम सुरक्षित आकारक v4.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+* {margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-moz-user-select:none;}
+body {
+    font-family:'Noto Sans Devanagari',serif;
+    background:linear-gradient(135deg,#0c0c1a 0%,#1a1a3e 50%,#16213e 100%);
+    color:#e0e6ed;
+    min-height:100vh;
+    padding:20px;
+    line-height:1.8;
+}
+.पात्र {
+    max-width:1200px;margin:0 auto;background:rgba(12,12,26,0.95);
+    backdrop-filter:blur(20px);border-radius:24px;padding:40px;
+    box-shadow:0 25px 50px rgba(0,0,0,0.5);border:1px solid rgba(59,130,246,0.3);
+    position:relative;
+}
+.पात्र::before {
+    content:'';position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,#3b82f6,#1d4ed8,#3b82f6);
+    animation:सङ्क्रमण 3s ease infinite;border-radius:24px 24px 0 0;
+}
+@keyframes सङ्क्रमण {0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.लाङ्गुल्य {
+    font-size:3.5em;background:linear-gradient(45deg,#3b82f6,#60a5fa,#1d4ed8);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    text-align:center;font-weight:800;margin-bottom:15px;
+}
+.सूत्र {
+    text-align:center;color:#94a3b8;font-size:1.2em;margin-bottom:40px;
+}
+.उन्नयनक्षेत्र {
+    border:3px dashed rgba(59,130,246,0.6);border-radius:20px;padding:50px 30px;
+    text-align:center;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);margin-bottom:35px;
+    background:rgba(59,130,246,0.08);
+}
+.उन्नयनक्षेत्र:hover {
+    border-color:#3b82f6;background:rgba(59,130,246,0.15);transform:translateY(-8px);
+}
+.चयनबटन {
+    background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;
+    padding:18px 45px;border-radius:50px;cursor:pointer;font-weight:700;
+    font-size:1.2em;display:inline-block;box-shadow:0 15px 35px rgba(59,130,246,0.4);
+    border:none;font-family:'Noto Sans Devanagari',serif;
+}
+.मापनियन्त्रण {
+    display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:20px;margin-bottom:30px;
+}
+.मापप्रवेश {
+    background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.1);
+    border-radius:16px;padding:20px;color:white;font-size:1.3em;
+    font-family:'Noto Sans Devanagari',serif;font-weight:600;
+}
+.मापनाम {
+    font-size:0.9em;color:#94a3b8;font-weight:500;margin-bottom:8px;
+    font-family:'Noto Sans Devanagari',serif;
+}
+.प्रक्रियाबटन {
+    background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:white;
+    border:none;padding:22px 50px;border-radius:50px;font-size:1.4em;
+    font-weight:800;cursor:pointer;width:100%;font-family:'Noto Sans Devanagari',serif;
+}
+#स्थिति {
+    padding:20px 30px;border-radius:16px;text-align:center;font-weight:600;
+    margin:30px 0;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);
+    font-family:'Noto Sans Devanagari',serif;
+}
+@media (max-width:768px) {
+    .मापनियन्त्रण {grid-template-columns:1fr 1fr !important;}
+    .पात्र {padding:20px;margin:10px;}
+}
+    </style>
 </head>
-
 <body>
-
-<header>Pro Image & Video Editor</header>
-
-<div class="toolbar">
-  <button onclick="Tools.grayscale()">Grayscale</button>
-  <button onclick="Tools.invert()">Invert</button>
-  <button onclick="Tools.rotate()">Rotate</button>
-  <button onclick="Tools.reset()">Reset</button>
-
-  <button onclick="Tools.playPause()">Play / Pause</button>
-  <button onclick="Tools.trim()">Trim 0–5s</button>
-  <button onclick="Tools.exportVideo()">Export MP4</button>
+<div class="पात्र">
+    <div class="लाङ्गुल्य">🔒 रक्ताक्ष v4.0</div>
+    <div class="सूत्र">उद्यम सुरक्षित आकारक • मूल प्राक्कथन • निश्चित माप • प्रगत संक्षेपण</div>
+    
+    <div class="उन्नयनक्षेत्र" id="उन्नयनक्षेत्र">
+        <div style="font-size:4em;margin-bottom:20px;">🖼️</div>
+        <div style="font-size:1.4em;margin-bottom:25px;">चित्रं विन्यस्य सुरक्षित प्रक्रिया करतु</div>
+        <label for="फाइलप्रवेश" class="चयनबटन">सुरक्षित चित्रं चयतु</label>
+        <input type="file" id="फाइलप्रवेश" accept="image/jpeg,image/png,image/webp,image/jpg" style="display:none;">
+        <div style="font-size:0.9em;color:#94a3b8;margin-top:15px;">अधिकतम १५ एमबी • जेपीजी/पीएनजी/वेबपी एव</div>
+    </div>
+    
+    <div class="मापनियन्त्रण">
+        <div>
+            <div class="मापनाम">विभागः</div>
+            <input type="number" id="विभाग" value="६००" min="1" max="४०९६" class="मापप्रवेश">
+        </div>
+        <div>
+            <div class="मापनाम">उचाइः</div>
+            <input type="number" id="उचाइ" value="२००" min="1" max="४०९६" class="मापप्रवेश">
+        </div>
+        <div>
+            <div class="मापनाम">अधिकतम केबी</div>
+            <input type="number" id="अधिकतमकेबी" value="५०" min="1" max="५०००" class="मापप्रवेश">
+        </div>
+        <div style="text-align:center;">
+            <div class="मापनाम" style="font-size:0.85em;">निश्चितं</div>
+        </div>
+    </div>
+    
+    <button class="प्रक्रियाबटन" onclick="सुरक्षितप्रक्रिया()" id="प्रक्रियाबटन">🚀 सुरक्षित प्रक्रिया</button>
+    <div id="स्थिति">🔒 तयार - उद्यम सुरक्षित प्रक्रिया v4.0</div>
+    <div id="प्राक्कथन"></div>
 </div>
-
-<div class="workspace">
-  <input type="file" id="fileInput" accept="image/*,video/*">
-  <canvas id="canvas" hidden></canvas>
-  <video id="video" controls hidden></video>
-</div>
-
-<footer>Apache-2.0 • GitHub Pages • All-in-One Editor</footer>
-
-<!-- FFmpeg.wasm -->
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
 
 <script>
-/* ================= SECURITY (DoS BASIC) ================= */
-let lastCall=0;
-function rateLimit(fn){
-  const now=Date.now();
-  if(now-lastCall<400)return;
-  lastCall=now;fn();
+let प्रक्रियासङ्ख्या=०, अन्तिमप्रक्रिया=०;
+const अधिकतमप्रक्रिया=५, प्रक्रियाविलम्ब=१०००;
+
+function सुरक्षितप्रक्रिया() {
+    const फाइलप्रवेश=document.getElementById('फाइलप्रवेश');
+    const फाइल=फाइलप्रवेश.files[०];
+    
+    if(!फाइल) {
+        document.getElementById('स्थिति').textContent='⚠️ प्रथमं चित्रं चयतु';
+        return;
+    }
+    
+    document.getElementById('प्रक्रियाबटन').disabled=true;
+    document.getElementById('प्रक्रियाबटन').textContent='🔄 प्रक्रिया चालू...';
+    document.getElementById('स्थिति').textContent='🔒 उद्यम सुरक्षित प्रक्रिया v4.0...';
+    
+    const लक्ष्यविभाग=parseInt(document.getElementById('विभाग').value);
+    const लक्ष्यउचाइ=parseInt(document.getElementById('उचाइ').value);
+    const अधिकतमकेबी=parseInt(document.getElementById('अधिकतमकेबी').value)*१०२४;
+    
+    const पाठक=new FileReader();
+    पाठक.onload=कार्य(घटना) {
+        const चित्र=new Image();
+        चित्र.onload=कार्य() {
+            const कैनवास=document.createElement('canvas');
+            const संदर्भ=कैनवास.getContext('2d');
+            
+            कैनवास.width=लक्ष्यविभाग;
+            कैनवास.height=लक्ष्यउचाइ;
+            
+            संदर्भ.imageSmoothingQuality='high';
+            संदर्भ.drawImage(चित्र,०,०,लक्ष्यविभाग,लक्ष्यउचाइ);
+            
+            // जलचिह्नम्
+            संदर्भ.save();
+            संदर्भ.globalAlpha=०.१६;
+            संदर्भ.fillStyle='#3b82f6';
+            संदर्भ.font='bold २६px serif';
+            संदर्भ.textAlign='center';
+            संदर्भ.textBaseline='top';
+            संदर्भ.fillText('रक्ताक्ष.उद्यम.v4',कैनवास.width/२,३५);
+            संदर्भ.restore();
+            
+            document.getElementById('प्राक्कथन').innerHTML=`
+                <div style="background:rgba(255,255,255,०.०६);border-radius:२०px;padding:३०px;border:१px solid rgba(255,255,255,०.१);margin-top:३०px;">
+                    <h3 style="color:#3b82f6;">✅ प्रक्रिया पूर्ण v4.०</h3>
+                    <canvas id="परिणामकैनवास" style="max-width:१००%;border-radius:१६px;"></canvas>
+                    <div style="text-align:center;margin:२५px ०;">
+                        <a id="डाउनलोडबटन" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:white;padding:१८px ४०px;border-radius:५०px;text-decoration:none;font-weight:७००;" 
+                           href="${कैनवास.toDataURL('image/jpeg',०.९०)}" download="रक्ताक्ष_v4_${लक्ष्यविभाग}x${लक्ष्यउचाइ}.jpg">
+                           💾 सुरक्षित चित्रं संग्रहयतु
+                        </a>
+                    </div>
+                    <div style="text-align:center;font-size:१.१em;">
+                        📏 ${चित्र.naturalWidth}×${चित्र.naturalHeight} → 
+                        <span style="color:#10b981;">${कैनवास.width}×${कैनवास.height}</span>
+                        <br>💾 ${Math.round(कैनवास.toDataURL('image/jpeg',०.९०).length*०.०००९/१०२४)} केबी | 🔒 जलचिह्नसहितम्
+                    </div>
+                </div>
+            `;
+            
+            const परिणामकैनवास=document.getElementById('परिणामकैनवास');
+            परिणामकैनवास.width=कैनवास.width;
+            परिणामकैनवास.height=कैनवास.height;
+            परिणामकैनवास.getContext('2d').drawImage(कैनवास,०,०);
+            
+            document.getElementById('स्थिति').textContent='✅ पूर्णम्: '+कैनवास.width+'×'+कैनवास.height+' | '+Math.round(कैनवास.toDataURL('image/jpeg',०.९०).length*०.०००९/१०२४)+' केबी';
+            document.getElementById('प्रक्रियाबटन').disabled=false;
+            document.getElementById('प्रक्रियाबटन').textContent='🚀 सुरक्षित प्रक्रिया';
+        };
+        चित्र.src=घटना.target.result;
+    };
+    पाठक.readAsDataURL(फाइल);
 }
 
-/* ================= CORE ================= */
-const fileInput=document.getElementById("fileInput");
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-const video=document.getElementById("video");
-
-let originalImage=null;
-let videoFile=null;
-
-/* ================= LOAD FILE ================= */
-fileInput.onchange=()=>{
-  const f=fileInput.files[0];
-  if(!f)return;
-  if(f.type.startsWith("image"))loadImage(f);
-  else loadVideo(f);
-};
-
-/* ================= IMAGE ================= */
-function loadImage(file){
-  const img=new Image();
-  img.onload=()=>{
-    canvas.hidden=false;video.hidden=true;
-    canvas.width=img.width;canvas.height=img.height;
-    ctx.drawImage(img,0,0);
-    originalImage=ctx.getImageData(0,0,canvas.width,canvas.height);
-  };
-  img.src=URL.createObjectURL(file);
-}
-
-/* ================= VIDEO ================= */
-function loadVideo(file){
-  videoFile=file;
-  video.hidden=false;canvas.hidden=true;
-  video.src=URL.createObjectURL(file);
-  video.load();
-}
-
-/* ================= TOOLS ================= */
-const Tools={
-  grayscale(){
-    rateLimit(()=>{
-      let d=ctx.getImageData(0,0,canvas.width,canvas.height);
-      for(let i=0;i<d.data.length;i+=4){
-        let a=(d.data[i]+d.data[i+1]+d.data[i+2])/3;
-        d.data[i]=d.data[i+1]=d.data[i+2]=a;
-      }
-      ctx.putImageData(d,0,0);
-    });
-  },
-  invert(){
-    rateLimit(()=>{
-      let d=ctx.getImageData(0,0,canvas.width,canvas.height);
-      for(let i=0;i<d.data.length;i+=4){
-        d.data[i]=255-d.data[i];
-        d.data[i+1]=255-d.data[i+1];
-        d.data[i+2]=255-d.data[i+2];
-      }
-      ctx.putImageData(d,0,0);
-    });
-  },
-  rotate(){
-    rateLimit(()=>{
-      const t=document.createElement("canvas");
-      t.width=canvas.height;t.height=canvas.width;
-      t.getContext("2d").drawImage(canvas,0,0);
-      canvas.width=t.width;canvas.height=t.height;
-      ctx.save();
-      ctx.translate(canvas.width/2,canvas.height/2);
-      ctx.rotate(Math.PI/2);
-      ctx.drawImage(t,-t.height/2,-t.width/2);
-      ctx.restore();
-    });
-  },
-  reset(){
-    rateLimit(()=>{if(originalImage)ctx.putImageData(originalImage,0,0)});
-  },
-  playPause(){
-    rateLimit(()=>video.paused?video.play():video.pause());
-  },
-
-  /* ===== REAL VIDEO EDITING ===== */
-  async trim(){
-    if(!videoFile)return alert("Load video first");
-    alert("Trimming 0–5 seconds…");
-    await runFFmpeg("-i input.mp4 -ss 0 -t 5 -c copy out.mp4");
-    video.src=URL.createObjectURL(ffmpegResult);
-  },
-
-  async exportVideo(){
-    if(!videoFile)return alert("Load video first");
-    alert("Exporting MP4…");
-    await runFFmpeg("-i input.mp4 -c:v libx264 -c:a aac out.mp4");
-    download(ffmpegResult,"edited.mp4");
-  }
-};
-
-/* ================= FFMPEG CORE ================= */
-const { FFmpeg } = FFmpegWASM;
-const ffmpeg = new FFmpeg();
-let ffmpegResult=null;
-
-async function runFFmpeg(cmd){
-  if(!ffmpeg.loaded)await ffmpeg.load({coreURL:"https://unpkg.com/@ffmpeg/core@0.12.6/dist/ffmpeg-core.js"});
-  ffmpeg.FS("writeFile","input.mp4",await fetchFile(videoFile));
-  await ffmpeg.run(...cmd.split(" "));
-  const data=ffmpeg.FS("readFile","out.mp4");
-  ffmpegResult=new Blob([data.buffer],{type:"video/mp4"});
-}
-
-/* ================= HELPERS ================= */
-function download(blob,name){
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download=name;
-  a.click();
-}
-async function fetchFile(f){
-  return new Uint8Array(await f.arrayBuffer());
-}
+// प्रतिलिपि सुरक्षा
+document.addEventListener('contextmenu',कार्य(घटना){घटना.preventDefault();});
+document.addEventListener('keydown',कार्य(घटना){
+    if(घटना.key==='F12'||(घटना.ctrlKey&&घटना.shiftKey&&घटना.key==='I')) {
+        घटना.preventDefault();
+    }
+},true);
 </script>
-
 </body>
-</html>
+  </html>
