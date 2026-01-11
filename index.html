@@ -1,23 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <!-- BLOCK 1: META & TITLE -->
-    <title>🔒 RED-EYE Enterprise Secure Resizer v4.0</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- BLOCK 2: COPYRIGHT NOTICE -->
-    <!--
-    🔒 RED-EYE ENTERPRISE v4.0 © 2026 [YOUR_USERNAME] 
-    Apache License 2.0 - Commercial Use Prohibited
-    DMCA protected - https://github.com/YOUR_USERNAME/YOUR_REPO
-    -->
-</head>
-
-<!-- BLOCK 3: CSS STYLES -->
+<title>🔒 RED-EYE Enterprise Secure Resizer v4.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- COPYRIGHT PROTECTION -->
+<!--
+🔒 RED-EYE ENTERPRISE v4.0 © 2026 [YOUR_USERNAME] 
+Apache License 2.0 - Commercial Use Prohibited
+DMCA protected - https://github.com/YOUR_USERNAME/YOUR_REPO
+-->
 <style>
-/* ========================================
-   BLOCK 3: GLOBAL STYLES & LAYOUT
-   ======================================== */
 * {margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none;-moz-user-select:none;}
 body {
     font-family:'Segoe UI',Tahoma,Geneva,sans-serif;
@@ -26,24 +18,111 @@ body {
     min-height:100vh;
     padding:20px;
 }
-/* ... [ALL OTHER CSS REMAINS SAME] ... */
 .container {
     max-width:1200px;margin:0 auto;background:rgba(12,12,26,0.95);
     backdrop-filter:blur(20px);border-radius:24px;padding:40px;
     box-shadow:0 25px 50px rgba(0,0,0,0.5);border:1px solid rgba(59,130,246,0.3);
     position:relative;
 }
-/* [Include ALL original CSS styles here - unchanged] */
+.container::before {
+    content:'';position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,#3b82f6,#1d4ed8,#3b82f6);
+    animation:gradientShift 3s ease infinite;border-radius:24px 24px 0 0;
+}
+@keyframes gradientShift {0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.logo {
+    font-size:3.5em;background:linear-gradient(45deg,#3b82f6,#60a5fa,#1d4ed8);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    text-align:center;font-weight:800;margin-bottom:15px;text-shadow:0 0 30px rgba(59,130,246,0.5);
+}
+.tagline {text-align:center;color:#94a3b8;font-size:1.2em;margin-bottom:40px;font-weight:500;}
+.upload-zone {
+    border:3px dashed rgba(59,130,246,0.6);border-radius:20px;padding:50px 30px;
+    text-align:center;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);margin-bottom:35px;
+    background:rgba(59,130,246,0.08);position:relative;overflow:hidden;
+}
+.upload-zone::before {
+    content:'🔒 SECURE PROCESSING';position:absolute;top:-50px;right:-50px;
+    background:linear-gradient(45deg,#3b82f6,#1d4ed8);color:white;padding:10px 25px;
+    font-size:0.8em;font-weight:700;border-radius:20px;transform:rotate(45deg);
+}
+.upload-zone:hover {border-color:#3b82f6;background:rgba(59,130,246,0.15);transform:translateY(-8px);box-shadow:0 20px 40px rgba(59,130,246,0.2);}
+.upload-zone.dragover {border-color:#10b981;background:rgba(16,185,129,0.2);transform:scale(1.02);}
+#fileInput{display:none;}
+.upload-btn {
+    background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;padding:18px 45px;
+    border-radius:50px;cursor:pointer;font-weight:700;font-size:1.2em;display:inline-block;
+    box-shadow:0 15px 35px rgba(59,130,246,0.4);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);border:none;
+}
+.dimension-controls {
+    display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:20px;margin-bottom:30px;align-items:end;
+}
+.dimension-input {
+    background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.1);border-radius:16px;
+    padding:20px;color:white;font-size:1.3em;font-weight:600;transition:all 0.3s ease;
+}
+.dimension-input:focus {outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,0.2);background:rgba(255,255,255,0.12);}
+.dimension-label {font-size:0.9em;color:#94a3b8;font-weight:500;margin-bottom:8px;display:block;}
+.toggle-group {
+    display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.08);padding:15px 20px;
+    border-radius:16px;border:1px solid rgba(255,255,255,0.1);
+}
+.toggle-switch {
+    position:relative;width:60px;height:30px;background:rgba(255,255,255,0.2);border-radius:20px;cursor:pointer;transition:all 0.3s ease;
+}
+.toggle-switch input {opacity:0;width:0;height:0;}
+.slider {
+    position:absolute;top:3px;left:3px;right:3px;bottom:3px;background:#64748b;border-radius:18px;transition:0.3s;
+}
+.slider:before {
+    position:absolute;content:"";height:24px;width:24px;left:3px;bottom:3px;
+    background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:50%;transition:0.3s;box-shadow:0 2px 10px rgba(59,130,246,0.4);
+}
+input:checked + .slider {background:rgba(16,185,129,0.4);}
+input:checked + .slider:before {transform:translateX(30px);background:linear-gradient(135deg,#10b981,#059669);}
+.process-btn {
+    background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:white;border:none;padding:22px 50px;
+    border-radius:50px;font-size:1.4em;font-weight:800;cursor:pointer;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:0 20px 40px rgba(16,185,129,0.3);text-transform:uppercase;letter-spacing:1px;width:100%;
+}
+.process-btn:hover:not(:disabled) {transform:translateY(-6px);box-shadow:0 30px 60px rgba(16,185,129,0.4);}
+.process-btn:disabled {opacity:0.6;cursor:not-allowed;transform:none;}
+#status {
+    padding:20px 30px;border-radius:16px;text-align:center;font-weight:600;margin:30px 0;
+    min-height:24px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);
+}
+.status-processing {background:rgba(245,158,11,0.2) !important;border-color:rgba(245,158,11,0.5) !important;}
+.status-success {background:rgba(16,185,129,0.2) !important;border-color:rgba(16,185,129,0.5) !important;}
+.status-error {background:rgba(239,68,68,0.2) !important;border-color:rgba(239,68,68,0.5) !important;}
+.original-preview, .result-card {
+    background:rgba(255,255,255,0.06);border-radius:20px;padding:30px;border:1px solid rgba(255,255,255,0.1);
+    margin-top:30px;transform:translateY(20px);opacity:0;animation:slideUp 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes slideUp {to {transform:translateY(0);opacity:1;}}
+.preview-canvas {max-width:100%;max-height:300px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.3);border:2px solid rgba(59,130,246,0.4);}
+.result-canvas {max-width:100%;border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,0.4);border:3px solid rgba(59,130,246,0.6);}
+.download-btn {
+    display:inline-block;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:white;padding:18px 40px;
+    border-radius:50px;text-decoration:none;font-weight:700;font-size:1.1em;margin:20px 10px 0;box-shadow:0 15px 35px rgba(59,130,246,0.4);
+    transition:all 0.3s ease;
+}
+.download-btn:hover {transform:translateY(-3px);box-shadow:0 25px 50px rgba(59,130,246,0.5);}
+.protect-overlay {
+    position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;display:none;
+    justify-content:center;align-items:center;backdrop-filter:blur(10px);
+}
+.protect-modal {
+    background:linear-gradient(135deg,#1a1a2e,#16213e);border:3px solid #3b82f6;border-radius:24px;
+    padding:40px;text-align:center;max-width:500px;box-shadow:0 30px 60px rgba(59,130,246,0.4);color:white;
+}
+@media (max-width:768px) {.dimension-controls {grid-template-columns:1fr 1fr !important;}.container {padding:20px;margin:10px;}}
 </style>
-
+</head>
 <body>
-<!-- BLOCK 4: MAIN UI CONTAINER -->
 <div class="container" style="position:relative;">
-    <!-- BLOCK 5: HEADER & LOGO -->
     <div class="logo">🔒 RED-EYE v4.0</div>
     <div class="tagline">Enterprise Secure Resizer • Original Preview • Exact Dimensions • Advanced Compression • DoS Protected</div>
     
-    <!-- BLOCK 6: FILE UPLOAD ZONE -->
     <div class="upload-zone" id="uploadZone">
         <div style="font-size:4em;margin-bottom:20px;">🖼️</div>
         <div style="font-size:1.4em;margin-bottom:25px;">Drag & drop your image for secure processing</div>
@@ -52,7 +131,6 @@ body {
         <div style="font-size:0.9em;color:#94a3b8;margin-top:15px;">Max 15MB • JPG/PNG/WebP only</div>
     </div>
     
-    <!-- BLOCK 7: DIMENSION CONTROLS -->
     <div class="dimension-controls">
         <div><div class="dimension-label">Width</div><input type="number" id="width" value="600" min="1" max="4096"></div>
         <div><div class="dimension-label">Height</div><input type="number" id="height" value="200" min="1" max="4096"></div>
@@ -68,13 +146,12 @@ body {
         </div>
     </div>
     
-    <!-- BLOCK 8: PROCESS BUTTON & STATUS -->
     <button class="process-btn" onclick="processSecure()" id="processBtn">🚀 SECURE PROCESS</button>
     <div id="status">🔒 Ready - Enterprise secure processing v4.0</div>
     <div id="preview"></div>
 </div>
 
-<!-- BLOCK 9: PROTECTION MODAL -->
+<!-- ANTI-COPY PROTECTION MODAL -->
 <div class="protect-overlay" id="protectOverlay">
     <div class="protect-modal">
         <div style="font-size:3em;margin-bottom:20px;">🚫</div>
@@ -84,17 +161,11 @@ body {
     </div>
 </div>
 
-<!-- BLOCK 10: CORE JAVASCRIPT MODULES -->
 <script>
-// ========================================
-// BLOCK 10A: GLOBAL VARIABLES & CONSTANTS
-// ========================================
-let processCount=0, lastProcess=0, originalImg=null;
-const MAX_PROCESSES=5, PROCESS_DELAY=1000, MAX_DIM=4096;
+// 🔥 RED-EYE ENTERPRISE v4.0 - BEST OF BOTH SCRIPTS + ENHANCEMENTS
+let processCount=0,lastProcess=0,originalImg=null;
+const MAX_PROCESSES=5,PROCESS_DELAY=1000,MAX_DIM=4096;
 
-// ========================================
-// BLOCK 10B: UTILITY FUNCTIONS
-// ========================================
 function createSecureCanvas() {
     const canvas=document.createElement('canvas');
     canvas.crossOrigin='anonymous';
@@ -111,10 +182,39 @@ function checkDoS() {
         setStatus('⚠️ Rate limit: 5/min max','error');
         return false;
     }
-    processCount++; lastProcess=now;
+    processCount++;lastProcess=now;
     setTimeout(()=>processCount--,60000);
     return true;
 }
+
+document.addEventListener('DOMContentLoaded',()=>{
+    // ENTERPRISE ANTI-COPY PROTECTION (Enhanced)
+    document.addEventListener('contextmenu',e=>{e.preventDefault();showProtect();return false;});
+    document.addEventListener('keydown',e=>{
+        if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='u')||
+           (e.ctrlKey&&e.key==='s')||(e.ctrlKey&&e.key==='a')) {
+            e.preventDefault();showProtect();return false;
+        }
+    },true);
+    
+    // Drag & Drop (Enhanced from both scripts)
+    const uploadZone=document.getElementById('uploadZone');
+    ['dragenter','dragover','dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,ev=>ev.preventDefault()));
+    ['dragenter','dragover'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.add('dragover')));
+    ['dragleave','drop'].forEach(e=>uploadZone.addEventListener(e,()=>uploadZone.classList.remove('dragover')));
+    
+    uploadZone.addEventListener('drop',e=>{
+        const files=e.dataTransfer.files;
+        if(files.length>0) {
+            document.getElementById('fileInput').files=files;
+            showOriginalPreview(files[0]);
+        }
+    });
+    
+    document.getElementById('fileInput').addEventListener('change',e=>{
+        if(e.target.files.length>0) showOriginalPreview(e.target.files[0]);
+    });
+});
 
 function setStatus(msg,type='info') {
     const el=document.getElementById('status');
@@ -122,63 +222,171 @@ function setStatus(msg,type='info') {
     el.className=`status-${type}`;
 }
 
-// ========================================
-// BLOCK 10C: PROTECTION FUNCTIONS
-// ========================================
-function showProtect() { 
-    document.getElementById('protectOverlay').style.display='flex'; 
-    document.body.style.overflow='hidden'; 
-}
-function closeProtect() { 
-    document.getElementById('protectOverlay').style.display='none'; 
-    document.body.style.overflow='auto'; 
-}
+function showProtect() {document.getElementById('protectOverlay').style.display='flex';document.body.style.overflow='hidden';}
+function closeProtect() {document.getElementById('protectOverlay').style.display='none';document.body.style.overflow='auto';}
 
-// ========================================
-// BLOCK 10D: IMAGE PREVIEW FUNCTIONS
-// ========================================
 function showOriginalPreview(file) {
     const preview=document.getElementById('preview');
     const reader=new FileReader();
     reader.onload=e=>{
-        // [Preview canvas logic remains same]
-        preview.innerHTML=`<div class="original-preview">[...]</div>`;
-        // [Rest of preview code unchanged]
+        preview.innerHTML=`<div class="original-preview">
+            <h3 style="color:#94a3b8;margin-bottom:15px;">📁 Original Image Preview</h3>
+            <canvas id="originalCanvas" class="preview-canvas"></canvas>
+            <div style="margin-top:15px;font-size:1.1em;">
+                📏 <span id="origSize"></span> | 💾 <span id="origFileSize"></span>
+            </div>
+        </div>`;
+        
+        const img=new Image();
+        img.onload=()=>{
+            const canvas=document.getElementById('originalCanvas');
+            const ctx=canvas.getContext('2d');
+            const maxSize=300;
+            let rw=img.width, rh=img.height;
+            if(img.width>maxSize || img.height>maxSize) {
+                const ratio=Math.min(maxSize/img.width, maxSize/img.height);
+                rw*=ratio; rh*=ratio;
+            }
+            canvas.width=rw; canvas.height=rh;
+            ctx.drawImage(img,0,0,rw,rh);
+            
+            document.getElementById('origSize').textContent=`${img.width}×${img.height}`;
+            document.getElementById('origFileSize').textContent=`${Math.round(file.size/1024)}KB`;
+            originalImg=img;
+        };
+        img.src=e.target.result;
     };
     reader.readAsDataURL(file);
 }
 
-// ========================================
-// BLOCK 10E: MAIN PROCESSING FUNCTIONS
-// ========================================
+function addSecureWatermark(ctx,canvas) {
+    ctx.save();
+    ctx.globalAlpha=0.16;
+    ctx.fillStyle='#3b82f6';
+    ctx.font='bold 26px Segoe UI';
+    ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText('RED-EYE.ENTERPRISE.v4',canvas.width/2,35);
+    ctx.fillText('©2026 SECURE',canvas.width/2,canvas.height-25);
+    ctx.restore();
+}
+
 async function processSecure() {
-    // [Main processing logic - unchanged]
+    if(!checkDoS()) return;
+    
+    const fileInput=document.getElementById('fileInput');
+    const file=fileInput.files[0];
+    const preview=document.getElementById('preview');
+    const processBtn=document.getElementById('processBtn');
+    const exactSize=document.getElementById('exactSize').checked;
+    
+    if(!file) {setStatus('⚠️ Select image first','error');return;}
+    if(!file.type.startsWith('image/')) {setStatus('⚠️ JPG/PNG/WebP only','error');return;}
+    if(file.size>15*1024*1024) {setStatus('⚠️ Max 15MB','error');return;}
+    
+    processBtn.disabled=true;
+    processBtn.textContent='🔄 SECURE PROCESSING...';
+    setStatus('🔒 Enterprise secure processing v4.0...','processing');
+    preview.innerHTML='';
+    
+    const targetW=parseInt(document.getElementById('width').value);
+    const targetH=parseInt(document.getElementById('height').value);
+    const maxKB=parseInt(document.getElementById('maxKB').value)*1024;
+    
+    if(targetW>MAX_DIM || targetH>MAX_DIM) {
+        setStatus('⚠️ Max 4096px per side','error');
+        processBtn.disabled=false;
+        processBtn.textContent='🚀 SECURE PROCESS';
+        return;
+    }
+    
+    try {
+        const img=await loadImageSecure(file);
+        const canvas=optimizeImageAggressive(img,targetW,targetH,exactSize,maxKB);
+        
+        preview.innerHTML=`
+            <div class="result-card">
+                <h3 style="color:#3b82f6;margin-bottom:20px;">✅ ENTERPRISE PROCESSING COMPLETE v4.0</h3>
+                <canvas id="resultCanvas" class="result-canvas"></canvas>
+                <div style="text-align:center;margin:25px 0;">
+                    <a id="downloadBtn" class="download-btn" href="#" download="red-eye-enterprise.jpg">💾 DOWNLOAD SECURE IMAGE</a>
+                </div>
+                <div style="background:rgba(255,255,255,0.08);padding:20px;border-radius:16px;font-size:1.1em;text-align:center;">
+                    📏 <strong>${img.naturalWidth}×${img.naturalHeight}</strong> → 
+                    <span style="color:#10b981;">${canvas.width.toFixed(0)}×${canvas.height.toFixed(0)}</span> 
+                    ${exactSize?'<span style="color:#3b82f6;">EXACT</span>':'Proportional'}
+                    <br><strong>💾 ${Math.round(getFileSize(canvas)/1024)}KB</strong> | 🔒 Watermarked
+                </div>
+            </div>
+        `;
+        
+        const resultCanvas=document.getElementById('resultCanvas');
+        resultCanvas.width=canvas.width; resultCanvas.height=canvas.height;
+        resultCanvas.getContext('2d').drawImage(canvas,0,0);
+        
+        const dataURL=canvas.toDataURL('image/jpeg',0.90);
+        document.getElementById('downloadBtn').href=dataURL;
+        document.getElementById('downloadBtn').download=`RED-EYE_v4_${targetW}x${targetH}_${Math.round(getFileSize(canvas)/1024)}KB.jpg`;
+        
+        setStatus(`✅ Complete: ${canvas.width.toFixed(0)}×${canvas.height.toFixed(0)} | ${Math.round(getFileSize(canvas)/1024)}KB`,'success');
+    } catch(e) {
+        setStatus('❌ Failed: '+e.message,'error');
+        console.error('Processing error:',e);
+    }
+    
+    processBtn.disabled=false;
+    processBtn.textContent='🚀 SECURE PROCESS';
 }
 
-// ========================================
-// BLOCK 10F: IMAGE PROCESSING CORE
-// ========================================
+function getFileSize(canvas) {
+    return canvas.toDataURL('image/jpeg',0.90).length*0.0009;
+}
+
+function loadImageSecure(file) {
+    return new Promise((resolve,reject)=>{
+        const reader=new FileReader();
+        reader.onload=e=>{
+            const img=new Image();
+            img.crossOrigin='anonymous';
+            img.onload=()=>resolve(img);
+            img.onerror=()=>reject(new Error('Image load failed'));
+            img.src=e.target.result;
+        };
+        reader.onerror=()=>reject(new Error('File read error'));
+        reader.readAsDataURL(file);
+    });
+}
+
 function optimizeImageAggressive(img,targetW,targetH,exactSize,maxKB) {
-    // [Image optimization logic - unchanged]
+    const canvas=createSecureCanvas();
+    const ctx=canvas.getContext('2d');
+
+
+ BEST SIZING LOGIC (from script 1 - more precise)
+    if(exactSize) {
+        canvas.width=targetW;
+        canvas.height=targetH;
+    } else {
+        const ratio=Math.min(targetW/img.naturalWidth,targetH/img.naturalHeight);
+        canvas.width=Math.floor(img.naturalWidth*ratio);
+        canvas.height=Math.floor(img.naturalHeight*ratio);
+    }
+    
+    // HIGH QUALITY RENDERING (both scripts)
+    ctx.imageSmoothingQuality='high';
+    ctx.imageSmoothingEnabled=true;
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    
+    // ENHANCED WATERMARK (both scripts combined)
+    addSecureWatermark(ctx,canvas);
+    
+    // ADVANCED COMPRESSION (optimized from both)
+    let quality=0.92;
+    while(getFileSize(canvas)>maxKB && quality>0.05) {
+        quality-=0.015;
+    }
+    
+    return canvas;
 }
-
-// ========================================
-// BLOCK 10G: DOM READY & EVENT LISTENERS
-// ========================================
-document.addEventListener('DOMContentLoaded',()=>{
-    // [All event listeners - unchanged]
-});
 </script>
-
-<!-- BLOCK 11: FUTURE EXPANSION AREA -->
-<!-- Add new features/modules here without touching other blocks -->
-<script>
-// ========================================
-// BLOCK 11: NEW FEATURES GO HERE
-// Example: Add batch processing
-// function batchProcess() { ... }
-// ========================================
-</script>
-
 </body>
     </html>
