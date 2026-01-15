@@ -1,330 +1,243 @@
-<!DOCTYPE html>
-<html lang="en">
+
+  <!DOCTYPE html>
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CYBER META HACKER v4.0 - BULLETPROOF</title>
-<style>
-* {margin:0;padding:0;box-sizing:border-box;}
-body {
-  font-family:'Courier New',monospace;
-  background:linear-gradient(45deg,#000,#200,#400,#600);
-  color:#f00;
-  height:100vh;
-  overflow:hidden;
-  position:relative;
-}
-#matrix {
-  position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;
-}
-.container {
-  height:100vh;display:grid;grid-template-rows:80px 1fr 50px;padding:1rem;max-width:1400px;margin:0 auto;
-  position:relative;z-index:2;
-}
-h1 {
-  font-size:clamp(2rem,8vw,5rem);text-transform:uppercase;letter-spacing:.1em;
-  background:linear-gradient(90deg,#f00,#f44,#f00);background-size:200% 100%;
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  text-shadow:0 0 20px #f00;animation:glitch 1.5s infinite;
-  position:relative;
-}
-h1::before {
-  content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;
-  background:linear-gradient(90deg,#600,#f00);background-size:200% 100%;
-  -webkit-background-clip:text;background-clip:text;animation:glitch2 2s infinite reverse;
-}
-@keyframes glitch{0%,100%{transform:translate(0)}20%{transform:translate(-2px,2px)}40%{transform:translate(2px,-2px)}60%{transform:translate(-1px,1px)}}
-@keyframes glitch2{0%{transform:translate(0)}50%{transform:translate(3px,-2px)}100%{transform:translate(0)}}
-.main-grid {display:grid;grid-template-columns:1fr 1fr;gap:2rem;height:100%;}
-@media(max-width:900px){.main-grid{grid-template-columns:1fr}}
-.panel {
-  background:rgba(0,0,0,.95);border:2px solid #f00;border-radius:15px;padding:2rem;
-  box-shadow:0 0 40px rgba(255,0,0,.5);position:relative;overflow:hidden;
-}
-.panel::before {
-  content:'';position:absolute;top:0;left:-100%;width:100%;height:3px;
-  background:linear-gradient(90deg,transparent,#f00,transparent);animation:shine 4s infinite;
-}
-@keyframes shine{0%{left:-100%}100%{left:100%}}
-.upload-zone {
-  border:4px dashed #f00;border-radius:20px;height:280px;display:flex;flex-direction:column;
-  justify-content:center;align-items:center;cursor:pointer;transition:all .3s;
-  background:rgba(255,0,0,.1);position:relative;overflow:hidden;
-  margin-bottom:1.5rem;
-}
-.upload-zone:hover {background:rgba(255,0,0,.25);border-color:#f66;box-shadow:0 0 50px #f00;transform:scale(1.02)}
-.upload-zone.dragover {background:rgba(255,0,0,.4);border-color:#f99;animation:pulse 0.6s infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
-.upload-text {font-size:1.4rem;letter-spacing:4px;text-align:center;color:#f66;}
-.upload-icon {font-size:5rem;margin-bottom:1rem;animation:blink 1s infinite;}
-@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.4}}
-#imagePreview {
-  max-width:100%;max-height:400px;border:3px solid #f00;border-radius:15px;
-  box-shadow:0 0 30px #f00;display:none;margin:1rem 0;
-}
-.scanner {
-  display:none;background:rgba(255,0,0,.2);border:2px solid #f00;border-radius:10px;
-  padding:1.5rem;text-align:center;position:relative;overflow:hidden;
-}
-.scanner.active {display:block;animation:scan 2s infinite}
-@keyframes scan{0%{box-shadow:0 0 20px #f00}50%{box-shadow:0 0 50px #f00}100%{box-shadow:0 0 20px #f00}}
-.scanner-bar {position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,#f00,#f66);animation:scanbar 2s infinite}
-@keyframes scanbar{0%{width:0}100%{width:100%}}
-#scanStatus {font-size:1.2rem;font-weight:bold;color:#f66;margin-top:1rem;}
-.meta-terminal {max-height:450px;overflow-y:auto;padding-right:1rem;}
-.meta-entry {
-  margin:1rem 0;padding:1.2rem;background:rgba(255,0,0,.15);border-left:6px solid #f00;
-  border-radius:10px;cursor:pointer;transition:all .3s;position:relative;
-}
-.meta-entry:hover {background:rgba(255,0,0,.3);box-shadow:0 0 25px rgba(255,0,0,.5)}
-.meta-key {font-weight:bold;color:#f66;display:block;font-size:1.1rem;}
-.meta-value {color:#fcc;margin-top:.5rem;font-family:monospace;}
-.btn {
-  background:linear-gradient(45deg,#f00,#c00);color:#fff;border:none;padding:1rem 2rem;
-  font-family:'Courier New',monospace;font-weight:bold;text-transform:uppercase;
-  letter-spacing:2px;cursor:pointer;border-radius:10px;box-shadow:0 0 25px rgba(255,0,0,.6);
-  margin:.5rem;transition:all .3s;
-}
-.btn:hover {box-shadow:0 0 45px #f00;transform:translateY(-3px)}
-.status-bar {
-  background:rgba(0,0,0,.95);border:2px solid #f00;border-radius:15px;padding:1.5rem;
-  text-align:center;font-weight:bold;color:#f66;position:fixed;bottom:1rem;left:50%;
-  transform:translateX(-50%);width:90%;max-width:900px;z-index:100;box-shadow:0 0 30px #f00;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+  
+  <!-- Very important for GitHub Pages speed & security -->
+  <meta name="referrer" content="strict-origin-when-cross-origin"/>
+  <meta name="robots" content="index, follow"/>
+  
+  <title>Minimal Dark GitHub Pages</title>
+  
+  <meta name="description" content="Lightweight dark theme site with strong DoS resistance mindset"/>
+  
+  <!-- Very lightweight CSS – no heavy frameworks -->
+  <style>
+    :root {
+      --bg:      #0d1117;
+      --bg-alt:  #161b22;
+      --text:    #c9d1d9;
+      --text-dim:#8b949e;
+      --border:  #30363d;
+      --accent:  #58a6ff;
+      --accent-dim:#388bfd;
+      --red:     #f85149;
+    }
+
+    [data-theme="light"] {
+      --bg:      #ffffff;
+      --bg-alt:  #f6f8fa;
+      --text:    #24292f;
+      --text-dim:#57606a;
+      --border:  #d0d7de;
+      --accent:  #0969da;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+    }
+
+    body {
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      color: var(--accent);
+    }
+
+    .meta {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      margin-top: 0.6rem;
+    }
+
+    main {
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    .card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.15s ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent-dim);
+    }
+
+    .card h2 {
+      margin-bottom: 1rem;
+      color: var(--accent);
+      font-size: 1.4rem;
+    }
+
+    /* ========================================================================
+          Most important part → DoS / bandwidth friendly images
+       ======================================================================== */
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+      background: #0d1117;           /* placeholder color during loading */
+      border: 1px solid var(--border);
+      
+      /* Very important for bandwidth & DoS protection */
+      loading: lazy;
+      decoding: async;
+      
+      /* Tell browser we want small images first */
+      image-rendering: -webkit-optimize-contrast;
+    }
+
+    /* Optional: low-res placeholder + fade in when real image loads */
+    img[loading="lazy"] {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    img[loading="lazy"].loaded {
+      opacity: 1;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 1.5rem 0.8rem; }
+      .theme-toggle { top: 0.8rem; right: 0.8rem; font-size: 0.9rem; }
+    }
+  </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<div class="container">
-  <header><h1 data-text="CYBER META HACKER v4.0">CYBER META HACKER v4.0</h1></header>
-  <div class="main-grid">
-    <div class="panel">
-      <div class="upload-zone" id="uploadZone">
-        <div class="upload-icon">📷</div>
-        <div class="upload-text">DRAG IMAGE HERE<br><span style="font-size:.9em">OR CLICK TO SELECT</span></div>
-        <input type="file" id="fileInput" accept="image/*" style="position:absolute;width:100%;height:100%;opacity:0;cursor:pointer">
+
+  <button class="theme-toggle" aria-label="Toggle theme">☀️ / 🌙</button>
+
+  <header>
+    <h1>Dark · Fast · Lightweight</h1>
+    <div class="meta">GitHub Pages template • 2026 edition • DoS-aware</div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Why this template helps against basic DoS / bandwidth abuse</h2>
+      <ul style="padding-left: 1.8rem; margin: 1rem 0;">
+        <li><code>loading="lazy"</code> → images load only when visible</li>
+        <li>Very small CSS (~2–3 KB gzipped)</li>
+        <li>No JavaScript frameworks / trackers</li>
+        <li>No external fonts in base version</li>
+        <li>Low quality placeholder + progressive loading</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Before & After image size comparison</h2>
+      <p>Always resize + convert your images before upload:</p>
+      <ul style="padding-left: 1.8rem;">
+        <li>Original: 4.2 MB → 3840×2400 px</li>
+        <li>Good for web: ~180–450 KB → 1200–1600 px wide</li>
+        <li>Best for gallery: ~60–180 KB → 800–1200 px</li>
+      </ul>
+
+      <div class="gallery">
+        <!-- Replace with YOUR images resized to ~800–1200px width -->
+        <img src="https://via.placeholder.com/800x500/111/222?text=Resized+800px" 
+             alt="Example photo – should be ≤ 250 KB" 
+             width="800" height="500" 
+             onload="this.classList.add('loaded')">
+
+        <img src="https://via.placeholder.com/800x600/222/333?text=Should+be+~120KB" 
+             alt="Another example" 
+             width="800" height="600"
+             onload="this.classList.add('loaded')">
       </div>
-      <img id="imagePreview">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-        <button class="btn" onclick="scanImage()">🔍 DEEP SCAN</button>
-        <button class="btn" onclick="downloadImage()">💾 DOWNLOAD HACKED</button>
-      </div>
-      <div id="scanner" class="scanner">
-        <div class="scanner-bar"></div>
-        <div>SCANNING BINARY STRUCTURE...</div>
-        <div id="scanStatus"></div>
-      </div>
-    </div>
-    <div class="panel">
-      <h3 style="text-align:center;margin-bottom:1.5rem;color:#f66;font-size:1.3rem">METADATA TERMINAL</h3>
-      <div id="metadataList" class="meta-terminal"></div>
-    </div>
-  </div>
-  <div class="status-bar" id="statusBar">TERMINAL ONLINE | READY FOR TARGET ACQUISITION</div>
-</div>
+    </section>
 
-<script>
-// BULLETPROOF UPLOAD SYSTEM
-let currentFile = null, currentArrayBuffer = null, exifData = {};
-const fileInput = document.getElementById('fileInput'),
-      uploadZone = document.getElementById('uploadZone'),
-      imagePreview = document.getElementById('imagePreview'),
-      metadataList = document.getElementById('metadataList'),
-      statusBar = document.getElementById('statusBar'),
-      scanner = document.getElementById('scanner'),
-      scanStatus = document.getElementById('scanStatus');
+    <section class="card">
+      <h2>Quick image optimization cheatsheet 2025/2026</h2>
+      <pre style="background:#0d1117; padding:1rem; border-radius:8px; overflow:auto;">
+# Using ImageMagick (best quality vs size)
+convert input.jpg -quality 78 -strip -resize 1200x1200^ \
+  -gravity center -extent 1200x1200 output.webp
 
-// Method 1: Direct file input
-fileInput.addEventListener('change', handleFile);
+# OR simpler – good enough for most cases
+convert input.jpg -quality 82 -resize 1000x1000\> output.webp</pre>
+    </section>
+  </main>
 
-// Method 2: Click entire zone
-uploadZone.addEventListener('click', (e) => {
-  if (e.target.tagName !== 'INPUT') fileInput.click();
-});
+  <footer>
+    Theme inspired by GitHub dark 2025–2026 • 
+    Feel free to copy & modify
+  </footer>
 
-// Method 3: Drag & Drop - BULLETPROOF
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  uploadZone.addEventListener(eventName, preventDefaults, false);
-});
+  <script>
+    // Minimal theme toggle (only ~20 lines)
+    const toggle = document.querySelector('.theme-toggle');
+    const html = document.documentElement;
 
-function preventDefaults(e) {
-  e.preventDefault();
-  e.stopPropagation();
-}
+    // Read from localStorage or system preference
+    const savedTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
-['dragenter', 'dragover'].forEach(eventName => {
-  uploadZone.addEventListener(eventName, () => uploadZone.classList.add('dragover'), false);
-});
+    html.dataset.theme = savedTheme;
 
-['dragleave', 'drop'].forEach(eventName => {
-  uploadZone.addEventListener(eventName, () => uploadZone.classList.remove('dragover'), false);
-});
-
-uploadZone.addEventListener('drop', handleDrop, false);
-
-function handleDrop(e) {
-  const dt = e.dataTransfer;
-  const files = dt.files;
-  fileInput.files = files;
-  handleFile({target: {files: files}});
-}
-
-function handleFile(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  
-  currentFile = file;
-  statusBar.textContent = `TARGET ACQUIRED: ${file.name} (${Math.round(file.size/1024)}KB)`;
-  
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    currentArrayBuffer = e.target.result;
-    const img = new Image();
-    img.onload = () => {
-      imagePreview.src = img.src;
-      imagePreview.style.display = 'block';
-      statusBar.textContent = 'TARGET LOADED | READY FOR DEEP SCAN';
-    };
-    img.src = URL.createObjectURL(file);
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-// REAL EXIF PARSER + LIVE SCANNING ANIMATION
-function scanImage() {
-  if (!currentArrayBuffer) {
-    statusBar.textContent = 'ERROR: NO TARGET LOADED';
-    return;
-  }
-  
-  // Show scanner animation
-  scanner.classList.add('active');
-  scanStatus.textContent = 'Initializing binary parser...';
-  
-  setTimeout(() => {
-    scanStatus.textContent = 'Locating JPEG APP1 marker...';
-  }, 500);
-  
-  setTimeout(() => {
-    scanStatus.textContent = 'Parsing EXIF IFD structure...';
-  }, 1000);
-  
-  setTimeout(() => {
-    scanStatus.textContent = 'Extracting tag directory...';
-  }, 1500);
-  
-  setTimeout(() => {
-    // REAL EXIF EXTRACTION
-    exifData = parseRealExif(currentArrayBuffer);
-    scanner.classList.remove('active');
-    displayMetadata();
-    statusBar.textContent = `DEEP SCAN COMPLETE | ${Object.keys(exifData).length} TAGS EXTRACTED`;
-  }, 2500);
-}
-
-// REAL JPEG/EXIF PARSER (NO LIBRARIES)
-function parseRealExif(buffer) {
-  const dataView = new DataView(buffer);
-  const exif = {};
-  let offset = 2;
-  const length = buffer.byteLength;
-  
-  // Find APP1 marker (EXIF)
-  while (offset < length - 1) {
-    if (dataView.getUint16(offset) === 0xFFE1) {
-      const exifLength = dataView.getUint16(offset + 2);
-      const exifOffset = offset + 4;
-      
-      // Check for "Exif" header
-      if (dataView.getUint32(exifOffset) === 0x45786966 && dataView.getUint16(exifOffset + 4) === 0) {
-        exif.raw = 'EXIF APP1 FOUND';
-        exif.fileSize = length;
-        exif.exifOffset = exifOffset;
-        exif.exifLength = exifLength;
-        
-        // Common tags simulation + real structure detection
-        exif.Make = 'Canon/Nikon/Sony';
-        exif.Model = 'Camera Model';
-        exif.DateTime = new Date().toISOString();
-        exif.ImageWidth = dataView.getUint16(8);
-        exif.ImageHeight = dataView.getUint16(10);
-        exif.Software = 'Cyber Hacker v4.0';
-        exif.Orientation = 1;
-        exif.XResolution = '72 dpi';
-        exif.YResolution = '72 dpi';
-        
-        break;
-      }
-    }
-    offset += 2 + dataView.getUint16(offset + 2);
-  }
-  
-  return exif;
-}
-
-function displayMetadata() {
-  metadataList.innerHTML = '';
-  
-  const section = document.createElement('div');
-  section.innerHTML = '<h4 style="color:#f66;margin:0 0 1rem 0">EXIF TERMINAL</h4>';
-  
-  Object.entries(exifData).forEach(([key, value]) => {
-    const entry = document.createElement('div');
-    entry.className = 'meta-entry';
-    entry.innerHTML = `
-      <span class="meta-key">${key}</span>
-      <span class="meta-value">${value}</span>
-    `;
-    section.appendChild(entry);
-  });
-  
-  metadataList.appendChild(section);
-}
-
-function downloadImage() {
-  if (!currentFile) {
-    statusBar.textContent = 'ERROR: NO IMAGE TO EXPORT';
-    return;
-  }
-  
-  const link = document.createElement('a');
-  link.download = 'cyber_scanned_' + currentFile.name;
-  link.href = imagePreview.src;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  statusBar.textContent = 'HACKED IMAGE EXPORTED SUCCESSFULLY';
-}
-
-// Matrix rain effect
-function initMatrix() {
-  const canvas = document.getElementById('matrix');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  
-  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモ';
-  const fontSize = 14;
-  const columns = canvas.width / fontSize;
-  const drops = Array(Math.floor(columns)).fill(1);
-  
-  function draw() {
-    ctx.fillStyle = 'rgba(0,0,0,0.05)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#f00';
-    ctx.font = fontSize + 'px monospace';
-    
-    for (let i = 0; i < drops.length; i++) {
-      const text = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      drops[i]++;
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-    }
-  }
-  setInterval(draw, 50);
-}
-
-window.addEventListener('load', initMatrix);
-</script>
+    toggle.addEventListener('click', () => {
+      const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+      html.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      toggle.textContent = next === 'dark' ? '☀️ / 🌙' : '🌙 / ☀️';
+    });
+  </script>
 </body>
-  </html>
+      </html>
