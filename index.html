@@ -1,12 +1,12 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-  <title>Dark Fast Image Resizer & Editor – GitHub Pages</title>
-  <meta name="description" content="Resize, compress, advanced filters, effects, adjustments – all in browser – dark theme"/>
+  <title>Dark Fast Image & Video Editor – GitHub Pages</title>
+  <meta name="description" content="Resize, compress, advanced filters, effects, adjustments, video watermark removal – all in browser – dark theme"/>
 
   <style>
     :root {
@@ -81,7 +81,7 @@
       padding:1rem;
       text-align:center;
     }
-    .preview-box img {
+    .preview-box img, .preview-box video {
       max-width:100%;
       height:auto;
       border-radius:8px;
@@ -135,19 +135,19 @@
   <button class="theme-toggle" aria-label="Toggle theme">☀️ / 🌙</button>
 
   <header>
-    <h1>Browser Image Resizer & Editor</h1>
-    <p class="meta">Dark theme • Client-side • 20+ adjustments & effects • 2026</p>
+    <h1>Browser Image & Video Editor</h1>
+    <p class="meta">Dark theme • Client-side • 20+ adjustments & effects • Video WM Removal • 2026</p>
   </header>
 
   <main>
     <section class="card">
-      <h2>Upload Image</h2>
-      <p>Resize • Rotate • Flip • Tune • Filter • Effect • Compress — fully in-browser.</p>
+      <h2>Upload Image or Video</h2>
+      <p>Resize • Rotate • Flip • Tune • Filter • Effect • Compress — fully in-browser. Video supports basic WM removal (slow for long videos).</p>
 
       <label for="fileInput" class="upload-zone" id="dropZone">
-        <p>Click or drag & drop image here<br>(JPEG, PNG, WebP…)</p>
+        <p>Click or drag & drop image or video here<br>(JPEG, PNG, WebP, MP4, WebM…)</p>
       </label>
-      <input type="file" id="fileInput" accept="image/*">
+      <input type="file" id="fileInput" accept="image/*,video/*">
 
       <div class="preview-container" id="previewArea"></div>
     </section>
@@ -247,7 +247,7 @@
           </label>
 
           <label>Remove WM: <input type="color" id="wmColor" value="#ffffff"></label>
-          <label>WM Thresh: <input type="range" id="wmThreshold" min="0" max="80" value="25"> %</label>
+          <label>WM Thresh: <input type="range" id="wmThreshold" min="0" max="80" value="0"> %</label>
         </div>
       </div>
     </section>
@@ -289,299 +289,374 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    async function processImage(file) {
-      if (!file || !file.type.startsWith('image/')) return;
+    async function processMedia(file) {
+      if (!file) return;
       currentFile = file;
 
       const reader = new FileReader();
       reader.onload = async function(e) {
-        const img = new Image();
-        img.onload = async function() {
-          let canvas = document.createElement('canvas');
-          let ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (file.type.startsWith('image/')) {
+          const img = new Image();
+          img.onload = async function() {
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-          let w = img.width;
-          let h = img.height;
+            let w = img.width;
+            let h = img.height;
 
-          const maxW = parseInt(document.getElementById('maxWidth').value) || 1200;
-          const maxH = parseInt(document.getElementById('maxHeight').value) || 1200;
-          const lock = document.getElementById('lockAspect').checked;
+            const maxW = parseInt(document.getElementById('maxWidth').value) || 1200;
+            const maxH = parseInt(document.getElementById('maxHeight').value) || 1200;
+            const lock = document.getElementById('lockAspect').checked;
 
-          if (lock) {
-            if (w > maxW || h > maxH) {
-              const r = Math.min(maxW / w, maxH / h);
-              w = Math.round(w * r);
-              h = Math.round(h * r);
-            }
-          } else {
-            w = Math.min(w, maxW);
-            h = Math.min(h, maxH);
-          }
-
-          canvas.width = w;
-          canvas.height = h;
-          ctx.drawImage(img, 0, 0, w, h);
-
-          // 1. WM removal (basic)
-          const wmColor = document.getElementById('wmColor').value;
-          const wmThresh = parseInt(document.getElementById('wmThreshold').value) / 100;
-          if (wmThresh > 0) {
-            let idata = ctx.getImageData(0, 0, w, h);
-            let d = idata.data;
-            for (let i = 0; i < d.length; i += 4) {
-              const r = d[i], g = d[i+1], b = d[i+2];
-              const tr = parseInt(wmColor.slice(1,3),16), tg = parseInt(wmColor.slice(3,5),16), tb = parseInt(wmColor.slice(5,7),16);
-              if (Math.hypot(r-tr, g-tg, b-tb) / 441.67 < wmThresh) {
-                const avg = (r + g + b) / 3 * 0.92;
-                d[i] = d[i+1] = d[i+2] = avg;
+            if (lock) {
+              if (w > maxW || h > maxH) {
+                const r = Math.min(maxW / w, maxH / h);
+                w = Math.round(w * r);
+                h = Math.round(h * r);
               }
-            }
-            ctx.putImageData(idata, 0, 0);
-          }
-
-          // 2. Pixel-based adjustments (exposure, vibrance, shadows/highlights, noise, etc.)
-          let idata = ctx.getImageData(0, 0, w, h);
-          let data = idata.data;
-
-          const exp = parseFloat(document.getElementById('exposure').value);
-          const bright = parseFloat(document.getElementById('brightness').value);
-          const contr = parseFloat(document.getElementById('contrast').value);
-          const sat = parseFloat(document.getElementById('saturation').value);
-          const vib = parseFloat(document.getElementById('vibrance').value);
-          const shad = parseFloat(document.getElementById('shadows').value);
-          const high = parseFloat(document.getElementById('highlights').value);
-          const noiseLvl = parseFloat(document.getElementById('noise').value);
-          const pixSize = parseInt(document.getElementById('pixelate').value);
-          const postLvl = parseInt(document.getElementById('posterize').value);
-          const thresh = parseInt(document.getElementById('threshold').value);
-          const edgeAmt = parseFloat(document.getElementById('edge').value);
-          const embossAmt = parseFloat(document.getElementById('emboss').value);
-
-          // Pixelate first if enabled
-          if (pixSize > 1) {
-            const temp = document.createElement('canvas');
-            temp.width = Math.ceil(w / pixSize);
-            temp.height = Math.ceil(h / pixSize);
-            const tctx = temp.getContext('2d');
-            tctx.drawImage(canvas, 0, 0, temp.width, temp.height);
-            ctx.clearRect(0,0,w,h);
-            ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(temp, 0, 0, w, h);
-            idata = ctx.getImageData(0,0,w,h);
-            data = idata.data;
-          }
-
-          for (let i = 0; i < data.length; i += 4) {
-            let r = data[i], g = data[i+1], b = data[i+2];
-
-            // Exposure + Brightness
-            const factor = Math.pow(2, exp);
-            r *= factor; g *= factor; b *= factor;
-            r += bright * 255; g += bright * 255; b += bright * 255;
-
-            // Shadows & Highlights (simple curve)
-            const lum = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
-            if (lum < 0.5) {
-              const shadMul = 1 + shad * 2;
-              r *= shadMul; g *= shadMul; b *= shadMul;
             } else {
-              const highMul = 1 - high * 0.8;
-              r *= highMul; g *= highMul; b *= highMul;
+              w = Math.min(w, maxW);
+              h = Math.min(h, maxH);
             }
 
-            // Contrast
-            r = (r - 128) * contr + 128;
-            g = (g - 128) * contr + 128;
-            b = (b - 128) * contr + 128;
+            canvas.width = w;
+            canvas.height = h;
+            ctx.drawImage(img, 0, 0, w, h);
 
-            // Saturation + Vibrance
-            const avg = (r + g + b) / 3;
-            r = avg + (r - avg) * sat;
-            g = avg + (g - avg) * sat;
-            b = avg + (b - avg) * sat;
-
-            const max = Math.max(r,g,b), min = Math.min(r,g,b);
-            const amt = (max === min ? 0 : (max - avg) / (max - min)) * vib * -2;
-            r += (r - avg) * amt;
-            g += (g - avg) * amt;
-            b += (b - avg) * amt;
-
-            // Noise
-            if (noiseLvl > 0) {
-              const n = (Math.random() - 0.5) * noiseLvl * 2;
-              r += n; g += n; b += n;
-            }
-
-            // Posterize
-            if (postLvl < 255) {
-              const step = 255 / postLvl;
-              r = Math.round(r / step) * step;
-              g = Math.round(g / step) * step;
-              b = Math.round(b / step) * step;
-            }
-
-            // Threshold
-            if (thresh < 255 && thresh > 0) {
-              const l = (r * 0.299 + g * 0.587 + b * 0.114);
-              const val = l > thresh ? 255 : 0;
-              r = g = b = val;
-            }
-
-            // Clamp
-            data[i]   = Math.max(0, Math.min(255, r));
-            data[i+1] = Math.max(0, Math.min(255, g));
-            data[i+2] = Math.max(0, Math.min(255, b));
-          }
-
-          ctx.putImageData(idata, 0, 0);
-
-          // Edge detect & Emboss (simple 3x3 kernels)
-          if (edgeAmt > 0 || embossAmt > 0) {
-            const src = ctx.getImageData(0,0,w,h).data;
-            const dst = ctx.createImageData(w, h);
-            const d = dst.data;
-
-            for (let y = 1; y < h-1; y++) {
-              for (let x = 1; x < w-1; x++) {
-                const i = (y * w + x) * 4;
-                for (let c = 0; c < 3; c++) {
-                  const p00 = src[((y-1)*w + (x-1))*4 + c];
-                  const p01 = src[((y-1)*w + x)*4 + c];
-                  const p02 = src[((y-1)*w + (x+1))*4 + c];
-                  const p10 = src[(y*w + (x-1))*4 + c];
-                  const p11 = src[(y*w + x)*4 + c];
-                  const p12 = src[(y*w + (x+1))*4 + c];
-                  const p20 = src[((y+1)*w + (x-1))*4 + c];
-                  const p21 = src[((y+1)*w + x)*4 + c];
-                  const p22 = src[((y+1)*w + (x+1))*4 + c];
-
-                  let val;
-                  if (edgeAmt > 0) {
-                    // Sobel-ish
-                    val = Math.abs((p02 + p12 + p22) - (p00 + p10 + p20)) +
-                          Math.abs((p20 + p21 + p22) - (p00 + p01 + p02));
-                    val *= edgeAmt * 0.25;
-                  } else {
-                    val = src[i + c];
-                  }
-
-                  if (embossAmt > 0) {
-                    const emb = -p00 - p01 - p02 + p20 + p21 + p22;
-                    val += emb * embossAmt * 0.6;
-                  }
-
-                  d[i + c] = Math.max(0, Math.min(255, val + 128)); // center bias for emboss
+            // WM removal
+            const wmColor = document.getElementById('wmColor').value;
+            const wmThresh = parseInt(document.getElementById('wmThreshold').value) / 100;
+            if (wmThresh > 0) {
+              let idata = ctx.getImageData(0, 0, w, h);
+              let d = idata.data;
+              for (let i = 0; i < d.length; i += 4) {
+                const r = d[i], g = d[i+1], b = d[i+2];
+                const tr = parseInt(wmColor.slice(1,3),16), tg = parseInt(wmColor.slice(3,5),16), tb = parseInt(wmColor.slice(5,7),16);
+                if (Math.hypot(r-tr, g-tg, b-tb) / 441.67 < wmThresh) {
+                  const avg = (r + g + b) / 3 * 0.92;
+                  d[i] = d[i+1] = d[i+2] = avg;
                 }
-                d[i+3] = src[i+3];
               }
+              ctx.putImageData(idata, 0, 0);
             }
-            ctx.putImageData(dst, 0, 0);
-          }
 
-          // CSS filters (blur, grayscale, etc.)
-          let filters = [];
-          if (parseFloat(document.getElementById('blur').value) > 0) filters.push(`blur(${document.getElementById('blur').value}px)`);
-          if (document.getElementById('grayscale').checked) filters.push('grayscale(100%)');
-          if (document.getElementById('sepia').checked) filters.push('sepia(100%)');
-          if (document.getElementById('invert').checked) filters.push('invert(100%)');
+            // Pixel-based custom adjustments (exposure, vibrance, shadows/highlights, noise, posterize, threshold)
+            let idata = ctx.getImageData(0, 0, w, h);
+            let data = idata.data;
 
-          if (filters.length) {
-            const temp = document.createElement('canvas');
-            temp.width = w; temp.height = h;
-            const tctx = temp.getContext('2d');
-            tctx.filter = filters.join(' ');
-            tctx.drawImage(canvas, 0, 0);
-            canvas = temp;
-            ctx = tctx;
-          }
+            const exp = parseFloat(document.getElementById('exposure').value);
+            const vib = parseFloat(document.getElementById('vibrance').value);
+            const shad = parseFloat(document.getElementById('shadows').value);
+            const high = parseFloat(document.getElementById('highlights').value);
+            const noiseLvl = parseFloat(document.getElementById('noise').value);
+            const pixSize = parseInt(document.getElementById('pixelate').value);
+            const postLvl = parseInt(document.getElementById('posterize').value);
+            const thresh = parseInt(document.getElementById('threshold').value);
+            const edgeAmt = parseFloat(document.getElementById('edge').value);
+            const embossAmt = parseFloat(document.getElementById('emboss').value);
 
-          // Sharpen (simple)
-          const sharpAmt = parseFloat(document.getElementById('sharpen').value);
-          if (sharpAmt > 0) {
-            const src = ctx.getImageData(0,0,w,h).data;
-            const dst = ctx.createImageData(w,h);
-            const out = dst.data;
-            for (let y=1; y<h-1; y++) for (let x=1; x<w-1; x++) {
-              const i = (y*w + x)*4;
-              for (let c=0; c<3; c++) {
-                const center = src[i+c];
-                const avg = (src[i-4+c] + src[i+4+c] + src[i-w*4+c] + src[i+w*4+c]) / 4;
-                out[i+c] = Math.max(0, Math.min(255, center + sharpAmt * (center - avg)));
+            // Pixelate
+            if (pixSize > 1) {
+              const temp = document.createElement('canvas');
+              temp.width = Math.ceil(w / pixSize);
+              temp.height = Math.ceil(h / pixSize);
+              const tctx = temp.getContext('2d');
+              tctx.drawImage(canvas, 0, 0, temp.width, temp.height);
+              ctx.clearRect(0,0,w,h);
+              ctx.imageSmoothingEnabled = false;
+              ctx.drawImage(temp, 0, 0, w, h);
+              idata = ctx.getImageData(0,0,w,h);
+              data = idata.data;
+            }
+
+            for (let i = 0; i < data.length; i += 4) {
+              let r = data[i], g = data[i+1], b = data[i+2];
+
+              // Exposure
+              const factor = Math.pow(2, exp);
+              r *= factor; g *= factor; b *= factor;
+
+              // Shadows & Highlights
+              const lum = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+              if (lum < 0.5) {
+                const shadMul = 1 + shad * 2;
+                r *= shadMul; g *= shadMul; b *= shadMul;
+              } else {
+                const highMul = 1 - high * 0.8;
+                r *= highMul; g *= highMul; b *= highMul;
               }
-              out[i+3] = src[i+3];
+
+              // Vibrance
+              const avg = (r + g + b) / 3;
+              const max = Math.max(r,g,b), min = Math.min(r,g,b);
+              const amt = (max === min ? 0 : (max - avg) / (max - min)) * vib * -2;
+              r += (r - avg) * amt;
+              g += (g - avg) * amt;
+              b += (b - avg) * amt;
+
+              // Noise
+              if (noiseLvl > 0) {
+                const n = (Math.random() - 0.5) * noiseLvl * 2;
+                r += n; g += n; b += n;
+              }
+
+              // Posterize
+              if (postLvl < 255) {
+                const step = 255 / postLvl;
+                r = Math.round(r / step) * step;
+                g = Math.round(g / step) * step;
+                b = Math.round(b / step) * step;
+              }
+
+              // Threshold
+              if (thresh < 255 && thresh > 0) {
+                const l = (r * 0.299 + g * 0.587 + b * 0.114);
+                const val = l > thresh ? 255 : 0;
+                r = g = b = val;
+              }
+
+              // Clamp
+              data[i]   = Math.max(0, Math.min(255, r));
+              data[i+1] = Math.max(0, Math.min(255, g));
+              data[i+2] = Math.max(0, Math.min(255, b));
             }
-            ctx.putImageData(dst, 0, 0);
-          }
 
-          // Opacity
-          const op = parseFloat(document.getElementById('opacity').value);
-          if (op < 1) {
-            ctx.globalAlpha = op;
-            const temp = document.createElement('canvas');
-            temp.width = w; temp.height = h;
-            temp.getContext('2d').drawImage(canvas, 0, 0);
-            ctx.globalAlpha = 1;
-            ctx.clearRect(0,0,w,h);
-            ctx.drawImage(temp, 0, 0);
-          }
+            ctx.putImageData(idata, 0, 0);
 
-          // Final rotation & flip
-          const rot = parseInt(document.getElementById('rotate').value);
-          const flip = document.getElementById('flip').value;
-          if (rot !== 0 || flip !== 'none') {
-            const final = document.createElement('canvas');
-            const fctx = final.getContext('2d');
-            if (rot === 90 || rot === 270) {
-              final.width = h; final.height = w;
-            } else {
-              final.width = w; final.height = h;
+            // Edge & Emboss
+            if (edgeAmt > 0 || embossAmt > 0) {
+              const src = ctx.getImageData(0,0,w,h).data;
+              const dst = ctx.createImageData(w, h);
+              const d = dst.data;
+
+              for (let y = 1; y < h-1; y++) {
+                for (let x = 1; x < w-1; x++) {
+                  const i = (y * w + x) * 4;
+                  for (let c = 0; c < 3; c++) {
+                    const p00 = src[((y-1)*w + (x-1))*4 + c];
+                    const p01 = src[((y-1)*w + x)*4 + c];
+                    const p02 = src[((y-1)*w + (x+1))*4 + c];
+                    const p10 = src[(y*w + (x-1))*4 + c];
+                    const p12 = src[(y*w + (x+1))*4 + c];
+                    const p20 = src[((y+1)*w + (x-1))*4 + c];
+                    const p21 = src[((y+1)*w + x)*4 + c];
+                    const p22 = src[((y+1)*w + (x+1))*4 + c];
+
+                    let val = p00; // default
+                    if (edgeAmt > 0) {
+                      val = Math.abs((p02 + p12 + p22) - (p00 + p10 + p20)) +
+                            Math.abs((p20 + p21 + p22) - (p00 + p01 + p02));
+                      val *= edgeAmt * 0.25;
+                    } else {
+                      val = src[i + c];
+                    }
+
+                    if (embossAmt > 0) {
+                      const emb = -p00 - p01 - p02 + p20 + p21 + p22;
+                      val += emb * embossAmt * 0.6;
+                    }
+
+                    d[i + c] = Math.max(0, Math.min(255, val + 128));
+                  }
+                  d[i+3] = src[i+3];
+                }
+              }
+              ctx.putImageData(dst, 0, 0);
             }
-            fctx.translate(final.width/2, final.height/2);
-            fctx.rotate(rot * Math.PI / 180);
-            if (flip === 'horizontal' || flip === 'both') fctx.scale(-1,1);
-            if (flip === 'vertical' || flip === 'both') fctx.scale(1,-1);
-            fctx.drawImage(canvas, -w/2, -h/2);
-            canvas = final;
-          }
 
-          const quality = parseFloat(document.getElementById('quality').value);
-          const mime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
-          const blob = await new Promise(r => canvas.toBlob(r, mime, quality));
-          const dataUrl = URL.createObjectURL(blob);
+            // CSS filters (moved here for optimization)
+            let filters = [];
+            const bright = parseFloat(document.getElementById('brightness').value);
+            const contr = parseFloat(document.getElementById('contrast').value);
+            const sat = parseFloat(document.getElementById('saturation').value);
+            const hue = parseFloat(document.getElementById('hue').value);
+            const blurPx = parseFloat(document.getElementById('blur').value);
+            const grayscale = document.getElementById('grayscale').checked ? '100%' : '';
+            const sepia = document.getElementById('sepia').checked ? '100%' : '';
+            const invert = document.getElementById('invert').checked ? '100%' : '';
 
-          previewArea.innerHTML = `
-            <div class="preview-box">
-              <strong>Original</strong><br>
-              <img src="${e.target.result}" alt="Original">
-              <div class="stats">Size: ${formatBytes(file.size)} • ${img.width}×${img.height}</div>
-            </div>
-            <div class="preview-box">
-              <strong>Edited</strong><br>
-              <img src="${dataUrl}" alt="Edited">
-              <div class="stats">Size: ${formatBytes(blob.size)} • ${canvas.width}×${canvas.height}</div>
-              <a href="${dataUrl}" download="edited.${mime.split('/')[1]}" class="btn">Download</a>
-            </div>
-          `;
-        };
-        img.src = e.target.result;
+            if (bright !== 0) filters.push(`brightness(${1 + bright})`);
+            if (contr !== 1) filters.push(`contrast(${contr})`);
+            if (sat !== 1) filters.push(`saturate(${sat})`);
+            if (hue !== 0) filters.push(`hue-rotate(${hue}deg)`);
+            if (blurPx > 0) filters.push(`blur(${blurPx}px)`);
+            if (grayscale) filters.push(`grayscale(${grayscale})`);
+            if (sepia) filters.push(`sepia(${sepia})`);
+            if (invert) filters.push(`invert(${invert})`);
+
+            if (filters.length) {
+              const temp = document.createElement('canvas');
+              temp.width = w; temp.height = h;
+              const tctx = temp.getContext('2d');
+              tctx.filter = filters.join(' ');
+              tctx.drawImage(canvas, 0, 0);
+              canvas = temp;
+              ctx = tctx;
+            }
+
+            // Sharpen
+            const sharpAmt = parseFloat(document.getElementById('sharpen').value);
+            if (sharpAmt > 0) {
+              const src = ctx.getImageData(0,0,w,h).data;
+              const dst = ctx.createImageData(w,h);
+              const out = dst.data;
+              for (let y=1; y<h-1; y++) for (let x=1; x<w-1; x++) {
+                const i = (y*w + x)*4;
+                for (let c=0; c<3; c++) {
+                  const center = src[i+c];
+                  const avg = (src[i-4+c] + src[i+4+c] + src[i-w*4+c] + src[i+w*4+c]) / 4;
+                  out[i+c] = Math.max(0, Math.min(255, center + sharpAmt * (center - avg)));
+                }
+                out[i+3] = src[i+3];
+              }
+              ctx.putImageData(dst, 0, 0);
+            }
+
+            // Opacity
+            const op = parseFloat(document.getElementById('opacity').value);
+            if (op < 1) {
+              const temp = document.createElement('canvas');
+              temp.width = w; temp.height = h;
+              const tctx = temp.getContext('2d');
+              tctx.drawImage(canvas, 0, 0);
+              ctx.globalAlpha = op;
+              ctx.clearRect(0,0,w,h);
+              ctx.drawImage(temp, 0, 0);
+              ctx.globalAlpha = 1;
+            }
+
+            // Rotation & Flip
+            const rot = parseInt(document.getElementById('rotate').value);
+            const flip = document.getElementById('flip').value;
+            if (rot !== 0 || flip !== 'none') {
+              const final = document.createElement('canvas');
+              const fctx = final.getContext('2d');
+              if (rot === 90 || rot === 270) {
+                final.width = h; final.height = w;
+              } else {
+                final.width = w; final.height = h;
+              }
+              fctx.translate(final.width/2, final.height/2);
+              fctx.rotate(rot * Math.PI / 180);
+              if (flip === 'horizontal' || flip === 'both') fctx.scale(-1,1);
+              if (flip === 'vertical' || flip === 'both') fctx.scale(1,-1);
+              fctx.drawImage(canvas, -w/2, -h/2);
+              canvas = final;
+            }
+
+            const quality = parseFloat(document.getElementById('quality').value);
+            const mime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+            const blob = await new Promise(r => canvas.toBlob(r, mime, quality));
+            const dataUrl = URL.createObjectURL(blob);
+
+            previewArea.innerHTML = `
+              <div class="preview-box">
+                <strong>Original</strong><br>
+                <img src="${e.target.result}" alt="Original">
+                <div class="stats">Size: ${formatBytes(file.size)} • ${img.width}×${img.height}</div>
+              </div>
+              <div class="preview-box">
+                <strong>Edited</strong><br>
+                <img src="${dataUrl}" alt="Edited">
+                <div class="stats">Size: ${formatBytes(blob.size)} • ${canvas.width}×${canvas.height}</div>
+                <a href="${dataUrl}" download="edited.${mime.split('/')[1]}" class="btn">Download</a>
+              </div>
+            `;
+          };
+          img.src = e.target.result;
+        } else if (file.type.startsWith('video/')) {
+          const video = document.createElement('video');
+          video.src = URL.createObjectURL(file);
+          video.muted = true;
+          video.onloadedmetadata = async () => {
+            const width = video.videoWidth;
+            const height = video.videoHeight;
+            const duration = video.duration;
+            const fps = 30; // assume fixed
+
+            if (duration > 60) {
+              alert('Video too long for browser processing (max 60s)');
+              return;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            const stream = canvas.captureStream(fps);
+            const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+            const chunks = [];
+            recorder.ondataavailable = ev => chunks.push(ev.data);
+            recorder.onstop = () => {
+              const blob = new Blob(chunks, { type: 'video/webm' });
+              const dataUrl = URL.createObjectURL(blob);
+              previewArea.innerHTML = `
+                <div class="preview-box">
+                  <strong>Original</strong><br>
+                  <video src="${video.src}" controls alt="Original"></video>
+                  <div class="stats">Size: ${formatBytes(file.size)} • ${width}×${height}</div>
+                </div>
+                <div class="preview-box">
+                  <strong>Processed</strong><br>
+                  <video src="${dataUrl}" controls alt="Processed"></video>
+                  <div class="stats">Size: ${formatBytes(blob.size)} • ${width}×${height}</div>
+                  <a href="${dataUrl}" download="processed.webm" class="btn">Download</a>
+                </div>
+              `;
+            };
+
+            recorder.start();
+
+            const wmThresh = parseInt(document.getElementById('wmThreshold').value) / 100;
+            const wmColor = document.getElementById('wmColor').value;
+            let time = 0;
+            while (time < duration) {
+              video.currentTime = time;
+              await new Promise(resolve => video.onseeked = resolve);
+              ctx.drawImage(video, 0, 0, width, height);
+
+              if (wmThresh > 0) {
+                const idata = ctx.getImageData(0, 0, width, height);
+                const d = idata.data;
+                const tr = parseInt(wmColor.slice(1,3),16);
+                const tg = parseInt(wmColor.slice(3,5),16);
+                const tb = parseInt(wmColor.slice(5,7),16);
+                for (let i = 0; i < d.length; i += 4) {
+                  const r = d[i], g = d[i+1], b = d[i+2];
+                  if (Math.hypot(r - tr, g - tg, b - tb) / 441.67 < wmThresh) {
+                    const avg = (r + g + b) / 3 * 0.92;
+                    d[i] = d[i+1] = d[i+2] = avg;
+                  }
+                }
+                ctx.putImageData(idata, 0, 0);
+              }
+
+              // Add frame to stream (automatic via captureStream)
+              time += 1 / fps;
+            }
+
+            recorder.stop();
+          };
+          video.load();
+        }
       };
       reader.readAsDataURL(file);
     }
 
-    fileInput.onchange = e => { if (e.target.files[0]) processImage(e.target.files[0]); };
+    fileInput.onchange = e => { if (e.target.files[0]) processMedia(e.target.files[0]); };
     dropZone.onclick = () => fileInput.click();
     dropZone.ondragover = e => { e.preventDefault(); dropZone.style.borderColor = 'var(--accent)'; };
     dropZone.ondragleave = () => { dropZone.style.borderColor = 'var(--border)'; };
     dropZone.ondrop = e => {
       e.preventDefault(); dropZone.style.borderColor = 'var(--border)';
-      if (e.dataTransfer.files[0]) processImage(e.dataTransfer.files[0]);
+      if (e.dataTransfer.files[0]) processMedia(e.dataTransfer.files[0]);
     };
 
     document.querySelectorAll('input, select').forEach(el => {
-      el.addEventListener('input', () => { if (currentFile) processImage(currentFile); });
-      el.addEventListener('change', () => { if (currentFile) processImage(currentFile); });
-    });
+      el.addEventListener('input', () => { if (currentFile) processMedia(currentFile); });
+      el.addEventListener('change', () => { if (currentFile) processMedia(currentFile); });
+   });
   </script>
 </body>
 </html>
-```
