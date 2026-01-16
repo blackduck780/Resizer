@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -445,10 +446,13 @@
                 const i = (y * w + x) * 4;
                 for (let c = 0; c < 3; c++) {
                   const p00 = src[((y-1)*w + (x-1))*4 + c];
+                  const p01 = src[((y-1)*w + x)*4 + c];
                   const p02 = src[((y-1)*w + (x+1))*4 + c];
                   const p10 = src[(y*w + (x-1))*4 + c];
+                  const p11 = src[(y*w + x)*4 + c];
                   const p12 = src[(y*w + (x+1))*4 + c];
                   const p20 = src[((y+1)*w + (x-1))*4 + c];
+                  const p21 = src[((y+1)*w + x)*4 + c];
                   const p22 = src[((y+1)*w + (x+1))*4 + c];
 
                   let val;
@@ -579,4 +583,5 @@
     });
   </script>
 </body>
-  </html>
+</html>
+```
