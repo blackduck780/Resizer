@@ -4,11 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-  <!-- Security: Basic Content Security Policy (CSP) to restrict sources. Expand as needed. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://docs.opencv.org; img-src 'self' data:; media-src 'self' blob:; connect-src 'self';">
   <title>Dark Fast Image & Video Resizer & Editor – GitHub Pages</title>
   <meta name="description" content="Resize, compress, edit & remove watermarks from images and videos – all in browser – dark theme"/>
-  <!-- Load OpenCV.js securely -->
   <script async src="https://docs.opencv.org/4.9.0/opencv.js" onload="onOpenCvReady();"></script>
 
   <style>
@@ -206,11 +203,6 @@
   </main>
 
   <script>
-    // NOTE: For DDoS protection, this client-side script relies on hosting setup.
-    // Host on GitHub Pages with a custom domain proxied through Cloudflare (free tier).
-    // Cloudflare provides strong DDoS mitigation, rate limiting, and bot protection.
-    // See guide in the response above for setup steps. No code changes here are needed for DDoS.
-
     let cvReady = false;
     function onOpenCvReady() {
       cvReady = true;
